@@ -164,3 +164,12 @@ def removeDuplicates(nums: list[int]) -> int:
             nums[lent] = nums[num]
             lent += 1
     return lent
+
+# 27. Remove Element
+def removeElement(self, nums: list[int], val: int) -> int:
+    write = 0
+    for num in nums:
+        if num != val:
+            nums[write] = num
+            write += 1
+    return write
