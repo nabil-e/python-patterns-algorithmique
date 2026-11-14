@@ -141,3 +141,20 @@ def longestConsecutive(nums: list[int]) -> int:
                 current_res += 1
             res = max(res, current_res)
     return res
+
+def trouver_paire_somme_mille(nombres):
+    complements = {}
+    for i in nombres:
+        complement = 1000 - i
+        if complement in complements:
+            return [i, complements[complement]]
+        complements[i] = complement
+    print(complements)
+    return []
+
+if __name__ == "__main__":
+    resultat = trouver_paire_somme_mille([1, 2, 999])
+    print(resultat)
+    assert resultat == [1, 999] or resultat == [999, 1], "Le test avec une solution simple a échoué"
+
+    assert trouver_paire_somme_mille([1, 2, 3]) == [], "Le test sans solution possible a échoué"
