@@ -4,7 +4,7 @@ Utilise ces structures abstraites dans ton fichier `main.py` comme point de dép
 
 ---
 
-## 1. Hashing (`1. Hashing`)
+## 1. Hashing
 
 ### Recherche de complément / Mémoire de passage
 ```python
@@ -32,7 +32,7 @@ def squelette_hashing_frequences(elements):
 
 ---
 
-## 2. Two Pointers (`2. Two Pointers`)
+## 2. Two Pointers
 
 ### Pointeurs convergents (extrémités vers centre)
 ```python
@@ -62,7 +62,7 @@ def squelette_two_pointers_slow_fast(nums):
 
 ---
 
-## 3. Stack (`3. Stack`)
+## 3. Stack
 
 ### Validation d'imbrication / Élimination adjacente
 ```python
@@ -83,7 +83,7 @@ def squelette_stack(sequence):
 
 ---
 
-## 4. Binary Search (`4. Binary Search`)
+## 4. Binary Search
 
 ### Recherche de frontière monotone (première occurrence valide)
 ```python
@@ -103,7 +103,7 @@ def squelette_binary_search(low, high):
 
 ---
 
-## 5. Sliding Window (`5. Sliding Window`)
+## 5. Sliding Window
 
 ### Fenêtre de taille fixe `k`
 ```python
@@ -150,7 +150,7 @@ def squelette_sliding_window_variable(s):
 
 ---
 
-## 6. Prefix / Suffix Sum (`6. Prefix Suffix Sum`)
+## 6. Prefix / Suffix Sum
 
 ### Somme de plage en O(1)
 ```python
@@ -185,7 +185,7 @@ def squelette_prefix_sum_hashing(nums, k):
 
 ---
 
-## 7. Greedy (`7. Greedy`)
+## 7. Greedy
 
 ### Choix local optimal après tri
 ```python
@@ -203,7 +203,7 @@ def squelette_greedy(elements):
 
 ---
 
-## 8. Sorting Intervals (`8. Sorting Intervals`)
+## 8. Sorting Intervals
 
 ### Fusion d'intervalles qui se chevauchent
 ```python
@@ -225,7 +225,7 @@ def squelette_intervals(intervals):
 
 ---
 
-## 9. Heap (`9. Heap`)
+## 9. Heap
 
 ### Top K éléments (Min-Heap de taille K)
 ```python

@@ -173,3 +173,21 @@ def removeElement(self, nums: list[int], val: int) -> int:
             nums[write] = num
             write += 1
     return write
+
+# 1790. Check if One String Swap Can Make Strings Equal
+def areAlmostEqual(s1: str, s2: str) -> bool:
+    diff = []
+    for i in range(len(s1)):
+        if s1[i] != s2[i]:
+            diff.append(i)
+            if len(diff) > 2:
+                return False
+
+    if len(diff) == 0:
+        return True
+
+    if len(diff) == 2:
+        i,j = diff
+        return s1[i] == s2[j] and s2[i] == s1[j]
+
+    return False
