@@ -1,45 +1,48 @@
-# 🧭 Arbre de Décision : Identifier le bon Pattern Algorithmique
-
-Ce guide récapitulatif vous permet d'identifier la structure de données ou l'algorithme optimal dès la première lecture de l'énoncé.
+# 00. ARBRE DE DÉCISION : CHOISIR LE BON PATTERN
+*Méthode rapide en 10 secondes pour identifier l'algorithme optimal face à un énoncé LeetCode*
 
 ---
 
-## 1. Tableau de Décision Rapide
+## 1. GUIDE DE DÉCISION RAPIDE (SI L'ÉNONCÉ MENTIONNE...)
 
-| Indices dans l'énoncé | Mots-clés en anglais | Pattern à utiliser | Complexité visée |
+| Indice dans l'énoncé | Mots-clés (Anglais) | Pattern à choisir | Complexité visée |
 | :--- | :--- | :--- | :--- |
-| Chercher un élément, un complément ou compter des fréquences en $O(1)$. | *duplicates*, *frequency*, *anagram*, *pair sum*, *count* | **Hashing** (`dict`, `set`) | Temps : $O(n)$<br>Espace : $O(n)$ |
-| Tableau **trié**, comparer une paire aux extrémités, ou modifier sur place. | *sorted array*, *in-place*, *palindrome*, *triplet* | **Two Pointers** | Temps : $O(n)$<br>Espace : $O(1)$ |
-| Imbrication (parenthèses), annulation, ou trouver le prochain élément plus grand/petit. | *valid parentheses*, *next greater*, *daily temperatures*, *nested* | **Stack** (Pile / Pile Monotone) | Temps : $O(n)$<br>Espace : $O(n)$ |
-| Tableau **trié** (ou partiellement trié) ou recherche d'une valeur seuil optimale. | *sorted*, *rotated array*, *minimum capacity*, *search in O(log n)* | **Binary Search** | Temps : $O(\log n)$<br>Espace : $O(1)$ |
-| Sous-tableau ou sous-chaîne **contiguë** avec une condition de taille ou de somme (positifs). | *contiguous subarray*, *longest substring*, *window of size k* | **Sliding Window** | Temps : $O(n)$<br>Espace : $O(1)$ ou $O(k)$ |
-| Requêtes répétées de sommes sur des plages, ou sous-tableau avec somme exacte (avec **négatifs**). | *range sum*, *subarray sum equals k*, *product except self* | **Prefix / Suffix Sum** | Temps : $O(n)$<br>Espace : $O(n)$ |
-| Choix local optimal à chaque étape sans revenir en arrière (sauts, monnaie, planification). | *minimum jumps*, *maximum profit*, *can reach*, *assign* | **Greedy (Glouton)** | Temps : $O(n \log n)$ ou $O(n)$<br>Espace : $O(1)$ |
-| Plages horaires, réunions, segments qui se chevauchent ou à fusionner. | *intervals*, *overlapping*, *merge*, *meeting rooms* | **Sorting Intervals** | Temps : $O(n \log n)$<br>Espace : $O(n)$ |
-| Extraire dynamiquement les $K$ plus grands/petits éléments ou la médiane d'un flux. | *top k*, *kth largest*, *k closest*, *median stream* | **Heap (Tas Binaire)** | Temps : $O(n \log k)$<br>Espace : $O(k)$ |
+| **Tableau trié** (ou triable) + chercher une paire / triplet ou un élément | `sorted array`, `target sum`, `closest`, `O(log n)` | **Binary Search** (1 cible)<br>**Two Pointers** (paire) | `O(log n)`<br>`O(n)` |
+| **Sous-tableau contigu** ou sous-chaîne avec taille fixe ou condition min/max | `contiguous subarray`, `substring`, `longest/shortest` | **Sliding Window** (positifs)<br>**Prefix Sum + Hash** (négatifs) | `O(n)` |
+| **Somme sur plage(s)** répétée ou produit sauf soi-même | `range sum`, `subarray sum equals k`, `product except self` | **Prefix / Suffix Sum** | `O(n)` temps, `O(n)` ou `O(1)` espace |
+| **Doublons, fréquences, anagrammes** ou recherche instantanée en O(1) | `duplicates`, `frequency`, `anagram`, `two sum`, `lookup` | **Hashing (Dict / Set)** | `O(n)` temps, `O(n)` espace |
+| **Modifier sur place** sans mémoire extra, palindrome ou fusion de listes triées | `in-place`, `O(1) extra space`, `palindrome`, `merge sorted` | **Two Pointers** (Lent/Rapide ou Opposés) | `O(n)` temps, `O(1)` espace |
+| **Prochain élément** plus grand/petit, parenthèses ou annulations en chaîne | `next greater`, `valid parentheses`, `nested`, `collision` | **Stack (Pile)** (Monotone) | `O(n)` temps, `O(n)` espace |
+| **Top K éléments**, K-ième plus grand/petit, médiane ou fusion de K listes | `top k`, `kth largest/smallest`, `closest points`, `median` | **Heap (Tas Binaire)** | `O(n log k)` |
+| **Intervalles qui se chevauchent**, plages horaires ou fusion de créneaux | `intervals`, `overlap`, `merge`, `meeting rooms`, `schedule` | **Sorting Intervals** | `O(n log n)` |
+| **Choix local optimal**, sauts minimaux, atteindre la fin ou maximiser un profit | `minimum jumps`, `max profit`, `can reach`, `assign` | **Greedy (Glouton)** | `O(n)` ou `O(n log n)` |
+| **Liste chaînée** : milieu, cycle, inversion sur place ou fusion de nœuds | `linked list`, `ListNode`, `cycle`, `reverse`, `middle` | **Linked Lists** (Dummy / Fast & Slow) | `O(n)` temps, `O(1)` espace |
+| **Arbre binaire ou BST** : profondeur, parcours par niveau, chemin ou validation | `binary tree`, `BST`, `root`, `level order`, `depth`, `leaf` | **Trees** (DFS récursif / BFS deque) | `O(n)` temps, `O(h)` ou `O(w)` espace |
 
 ---
 
-## 2. Les 4 Duels Classiques (Comment trancher ?)
+## 2. LES DUELS CLASSIQUES (COMMENT ÉVITER LE PIÈGE)
 
-* **Sliding Window vs Prefix Sum + Hash Map :**
-  * Utilisez **Sliding Window** si tous les nombres sont **positifs** (agrandir augmente la somme, rétrécir la diminue).
-  * Utilisez **Prefix Sum + Hash Map** s'il y a des **nombres négatifs** ou des zéros qui brisent la monotonie de la fenêtre.
-* **Two Pointers vs Binary Search :**
-  * Utilisez **Two Pointers** si vous devez examiner *tous* les éléments ou combiner *deux* éléments (ex. : somme d'une paire).
-  * Utilisez **Binary Search** si vous cherchez *un* élément précis ou une limite en coupant l'espace de recherche en deux à chaque étape.
-* **Heap vs Sorting :**
-  * Utilisez **Sorting** si vous avez besoin de **tout** le tableau trié une seule fois.
-  * Utilisez un **Heap** si vous n'avez besoin que des **$K$ meilleurs éléments** ($K \ll N$) ou si des éléments arrivent **en continu** (flux).
-* **Greedy vs Dynamic Programming (DP) :**
-  * Essayez **Greedy** si un choix local évident ne bloque jamais l'optimum global.
-  * Passez à la **DP** si un choix apparemment avantageux maintenant peut vous pénaliser plus tard.
+- **Sliding Window vs Prefix Sum + Hash**
+  - **Sliding Window** : Uniquement si tous les nombres sont positifs (ajouter agrandit la somme, retirer la réduit).
+  - **Prefix Sum + Hash** : Obligatoire dès qu'il y a des nombres négatifs ou des zéros pour une somme exacte $k$.
+- **Two Pointers vs Binary Search**
+  - **Binary Search** : On cherche une seule valeur (ou un seuil optimal sur une réponse) en coupant l'espace en deux.
+  - **Two Pointers** : On combine deux éléments (ex: `a + b == target`) en réduisant l'intervalle pas à pas.
+- **Heap vs Sorting (Tri complet)**
+  - **Sorting** : Trie tout le tableau en $O(n \log n)$. Idéal si on a besoin de tout l'ordre.
+  - **Heap** : Garde seulement les $K$ meilleurs en $O(n \log k)$. Indispensable si les données arrivent en flux continu (stream).
+- **Greedy vs Programmation Dynamique (DP)**
+  - **Greedy** : Un choix local évident ne compromet jamais l'avenir (ex: prendre l'intervalle qui finit le plus tôt).
+  - **DP** : Si un choix immédiat bloque une meilleure combinaison plus tard (ex: rendre la monnaie avec des pièces arbitraires).
+- **Trees : DFS vs BFS**
+  - **DFS (Récursif)** : Idéal pour la profondeur, les chemins racine-feuille, la validation BST et un code court.
+  - **BFS (`deque`)** : Obligatoire pour un parcours niveau par niveau (level-order) ou la profondeur minimale.
 
 ---
 
-## 3. L'astuce des contraintes de taille ($N$)
+## 3. L'INDICE ULTIME : LIRE LES CONTRAINTES DE TAILLE (N)
 
-Regardez la taille maximale de l'entrée ($N$) en bas de l'énoncé pour deviner la complexité attendue :
-* $N \le 10^5$ ou $10^6$ $ightarrow$ Il faut impérativement du **$O(n)$** ou **$O(n \log n)$** (Hashing, Two Pointers, Sliding Window, Binary Search, Sorting, Heap).
-* $N \le 10^3$ $ightarrow$ Un algorithme en **$O(n^2)$** est accepté.
-* $N \le 20$ $ightarrow$ Force brute, Backtracking ou Bitmasking en **$O(2^n)$**.
+> **Astuce LeetCode :** Regardez toujours `N = len(nums)` en bas de l'énoncé pour éliminer les mauvaises pistes :
+> - **$N \le 10^5$** : Une boucle imbriquée $O(n^2)$ fera *Time Limit Exceeded*. Il faut obligatoirement du $O(n)$ (Hashing, Two Pointers, Sliding Window, Stack, Prefix Sum, Linked Lists, Trees) ou du $O(n \log n)$ (Sorting, Heap, Binary Search).
+> - **$N \ge 10^9$** : Même parcourir le tableau une fois est trop lent. C'est presque toujours du $O(\log n)$ (Binary Search) ou des maths.
