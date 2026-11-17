@@ -170,3 +170,35 @@ def minLength(s: str) -> int:
     return len(res)
 
 # 71. Simplify Path
+def simplifyPath(path: str) -> str:
+    new_path = []
+    path = path.split("/")
+    for i in path:
+        if i == "" or i == ".":
+            continue
+        elif i == "..":
+            if new_path:
+                new_path.pop()
+        else:
+            new_path.append(i)
+    return "/" + "/".join(new_path)
+
+# 150. Evaluate Reverse Polish Notation
+def evalRPN(tokens: list[str]) -> int:
+    res = []
+    for i in tokens:
+        if i not in {"+", "-", "*", "/"}:
+            res.append(int(i))
+        elif i == "+":
+            res.append(res.pop() + res.pop())
+        elif i == "-":
+            a = res.pop()
+            b = res.pop()
+            res.append(b-a)
+        elif i == "*":
+            res.append(res.pop() * res.pop())
+        elif i == "/":
+            a = res.pop()
+            b = res.pop()
+            res.append(int(b/a))
+    return sum(res)
