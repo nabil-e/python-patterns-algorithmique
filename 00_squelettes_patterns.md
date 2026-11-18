@@ -263,20 +263,20 @@ from collections import deque
 def squelette_bfs(root):
     if not root:
         return []
-    resultat = []
     queue = deque([root])
+    result = []
 
     while queue:
-        taille_niveau = len(queue)
-        niveau_courant = []
-        for _ in range(taille_niveau):
-            noeud = queue.popleft()
-            niveau_courant.append(noeud.val)
-            if noeud.left:
-                queue.append(noeud.left)
-            if noeud.right:
-                queue.append(noeud.right)
-        resultat.append(niveau_courant)
+        level = len(queue)
+        current_level = []
+        for _ in range(level):
+            node = queue.popleft()
+            current_level.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        result.append(current_level)
 
-    return resultat
+    return result
 ```

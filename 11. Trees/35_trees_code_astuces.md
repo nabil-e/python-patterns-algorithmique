@@ -45,6 +45,87 @@ def squelette_bfs(root):
 
     return resultat
 ```
+---
+
+## Implémentation des parcours DFS et BFS en Python
+
+Voici la structure de base d'un arbre binaire (`TreeNode`), les trois fonctions de parcours en profondeur (DFS), le parcours en largeur (BFS), ainsi qu'une fonction utilitaire pour générer un arbre à partir d'une liste niveau par niveau.
+
+```python
+from collections import deque
+
+# 1. Définition d'un nœud de l'arbre
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+# 2. Les 3 parcours DFS (Depth-First Search)
+def pre_order(root):
+    if not root:
+        return []
+    return [root.val] + pre_order(root.left) + pre_order(root.right)
+
+def in_order(root):
+    if not root:
+        return []
+    return in_order(root.left) + [root.val] + in_order(root.right)
+
+def post_order(root):
+    if not root:
+        return []
+    return post_order(root.left) + post_order(root.right) + [root.val]
+
+# 3. Le parcours BFS (Breadth-First Search / Niveau par niveau)
+def level_order(root):
+    if not root:
+        return []
+    queue = deque([root])
+    result = []
+
+    while queue:
+        level = len(queue)
+        current_level = []
+        for _ in range(level):
+            node = queue.popleft()
+            current_level.append(node.val)
+            if node.left:
+                queue.append(node.left)
+            if node.right:
+                queue.append(node.right)
+        result.append(current_level)
+
+    return result
+
+# 4. Fonction utilitaire pour construire l'arbre depuis une liste (niveau par niveau)
+def build_tree(values):
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = deque([root])
+    i = 1
+    while queue and i < len(values):
+        current = queue.popleft()
+        if i < len(values) and values[i] is not None:
+            current.left = TreeNode(values[i])
+            queue.append(current.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            current.right = TreeNode(values[i])
+            queue.append(current.right)
+        i += 1
+    return root
+
+# --- Test avec l'arbre du quiz ---
+root = build_tree([10, 5, 15, 2, 7, None, 20])
+
+print("Pre-order   :", pre_order(root))    # [10, 5, 2, 7, 15, 20]
+print("In-order    :", in_order(root))     # [2, 5, 7, 10, 15, 20]
+print("Post-order  :", post_order(root))   # [2, 7, 5, 20, 15, 10]
+print("Level-order :", level_order(root))  # [[10], [5, 15], [2, 7, 20]]
+```
+
 
 ---
 
@@ -101,18 +182,18 @@ def parcours_par_niveau(root: Optional[TreeNode]) -> list[list[int]]:
     if not root:
         return []
     queue = deque([root])
-    niveaux = []
+    result = []
     while queue:
-        niveau = []
+        level = []
         for _ in range(len(queue)):
             node = queue.popleft()
-            niveau.append(node.val)
+            level.append(node.val)
             if node.left:
                 queue.append(node.left)
             if node.right:
                 queue.append(node.right)
-        niveaux.append(niveau)
-    return niveaux
+        result.append(level)
+    return result
 
 
 # --- Template 3 : Valider un BST avec bornes min/max (LeetCode 98) ---
@@ -150,6 +231,23 @@ if __name__ == "__main__":
   ```python
   root.left, root.right = inverser_arbre(root.right), inverser_arbre(root.left)
   ```
+---
+## Comment choisir entre DFS et BFS sur un arbre ?
+
+### 1. La règle d'or : Que cherche l'énoncé ?
+* **Cherche le « Plus court » ou le « Plus proche » (`minDepth`, chemin le plus rapide) $\rightarrow$ BFS :** Le BFS explore étage par étage. Dès qu'il touche la cible, il s'arrête. Le DFS perdrait du temps à plonger jusqu'au fond de branches inutiles.
+* **Cherche le « Plus long » ou doit visiter *tout* l'arbre (`maxDepth`, somme totale, inverser) $\rightarrow$ DFS :** Comme pour `maxDepth`, il est impossible de connaître le maximum sans avoir inspecté toutes les branches jusqu'au bout. Le DFS est alors beaucoup plus court et propre à écrire (4 à 6 lignes).
+
+### 2. Tableau de décision rapide
+
+| Indice dans l'énoncé | Choix recommandé | Pourquoi ? |
+| :--- | :--- | :--- |
+| **"Niveau par niveau"**, **"par étage"**, **"vue de droite"** | **BFS** (avec `deque`) | L'algorithme est naturellement conçu pour grouper les nœuds par profondeur. |
+| **"Profondeur minimale"**, **"feuille la plus proche"** | **BFS** (avec `deque`) | Permet un arrêt immédiat (*early exit*) dès que la première feuille est trouvée. |
+| **"Profondeur maximale"**, **"diamètre"**, **"équilibré ?"** | **DFS** (Post-order) | On a besoin de remonter une information des feuilles vers la racine. |
+| **"Chemin de la racine à une feuille"**, **"somme d'un chemin"** | **DFS** (Pre-order) | La pile d'appels récursifs mémorise automatiquement le chemin parcouru. |
+| **"Arbre Binaire de Recherche (BST)"**, **"k-ième plus petit"** | **DFS** (In-order) | Visite automatiquement les éléments dans l'ordre croissant. |
+
 
 ---
 

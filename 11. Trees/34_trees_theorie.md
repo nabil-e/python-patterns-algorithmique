@@ -12,9 +12,11 @@ Il existe **3 ordres de visite** :
 
 ```text
         4
-       /       2   6      Pre-order  : 4, 2, 1, 3, 6
-     / \         In-order   : 1, 2, 3, 4, 6  (Trié car BST !)
-    1   3        Post-order : 1, 3, 2, 6, 4
+       / \
+      2   6        Pre-order  : 4, 2, 1, 3, 6
+     / \           In-order   : 1, 2, 3, 4, 6  (Trié car BST !)
+    1   3          Post-order : 1, 3, 2, 6, 4
+
 ```
 
 ### B. BFS — Breadth-First Search (Parcours en Largeur / Niveau par Niveau)
@@ -22,8 +24,8 @@ On explore l'arbre étage par étage de haut en bas en utilisant une file FIFO (
 
 ```text
 Niveau 0 :      [4]         -> queue = [4]
-               /   Niveau 1 :   [2]   [6]      -> queue = [2, 6]
-             / Niveau 2 : [1] [3]          -> queue = [1, 3]
+Niveau 1 :   [2]   [6]      -> queue = [2, 6]
+Niveau 2 : [1] [3]          -> queue = [1, 3]
 ```
 
 ### C. Propriété du BST (Binary Search Tree)
