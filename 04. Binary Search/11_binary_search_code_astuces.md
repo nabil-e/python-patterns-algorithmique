@@ -1,111 +1,130 @@
-# Binary Search — Code, Astuces et Pièges
+# 💻 Pattern 4 : Binary Search — Squelettes, Code & Astuces
 
-## 1. Templates Python (Prêts à exécuter)
-
-### A. Recherche exacte ou position d'insertion (Lower Bound)
-Trouve la cible dans un tableau trié, ou l'index exact où l'insérer pour maintenir l'ordre.
+## 1. Squelette Générique (Boilerplate)
 
 ```python
-def position_insertion(nums: list[int], cible: int) -> int:
-    gauche, droite = 0, len(nums) - 1
-    
-    while gauche <= droite:
-        milieu = gauche + (droite - gauche) // 2
-        if nums[milieu] == cible:
-            return milieu
-        elif nums[milieu] < cible:
-            gauche = milieu + 1
-        else:
-            droite = milieu - 1
-            
-    # Si non trouvé, 'gauche' pointe exactement sur la position d'insertion
-    return gauche
+def binary_search_boundary_skeleton(low: int, high: int) -> int:
+    def is_valid(mid: int) -> bool:
+        # Retourne True si mid satisfait la condition monotone
+        return ...
 
-# --- EXEMPLE PRÊT À LANCER ---
-if __name__ == "__main__":
-    tableau = [1, 3, 5, 6]
-    print(f"Tableau : {tableau}")
-    print(f"Position pour 5 (présent) : {position_insertion(tableau, 5)}")
-    print(f"Position pour 2 (absent)  : {position_insertion(tableau, 2)}")
-    print(f"Position pour 7 (fin)     : {position_insertion(tableau, 7)}")
-    # Sortie attendue : 2, 1, 4
+    while low < high:
+        mid: int = low + (high - low) // 2
+        if is_valid(mid):
+            high = mid      # mid est valide, on cherche encore plus à gauche
+        else:
+            low = mid + 1   # mid est trop petit, on l'exclut
+    return low
 ```
 
 ---
 
-### B. Recherche de première frontière (First True / First Bad Version)
-Trouve le tout premier élément qui satisfait une condition monotone (`False, False, ..., True, True`).
+## 2. Démos Exécutables (`main.py` — Section 1)
+
+Code typé en anglais avec commentaires en français, prêt à être copié-collé et exécuté localement :
 
 ```python
-def premiere_version_defectueuse(n: int, est_defectueuse) -> int:
-    gauche, droite = 1, n
-    
-    while gauche < droite:
-        milieu = gauche + (droite - gauche) // 2
-        if est_defectueuse(milieu):
-            # milieu est peut-être la première, on garde milieu dans l'espace de recherche
-            droite = milieu
+import bisect
+
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
+
+def search_insert(nums: list[int], target: int) -> int:
+    """LeetCode 35 : Trouve l'index de target ou sa position d'insertion."""
+    left: int = 0
+    right: int = len(nums) - 1
+
+    while left <= right:
+        mid: int = left + (right - left) // 2
+        if nums[mid] == target:
+            return mid
+        elif nums[mid] < target:
+            left = mid + 1
         else:
-            # milieu est bonne, la première défectueuse est forcément après
-            gauche = milieu + 1
-            
-    return gauche
+            right = mid - 1
 
-# --- EXEMPLE PRÊT À LANCER ---
-if __name__ == "__main__":
-    # Simulation d'une API : les versions >= 4 sont défectueuses
-    api_test = lambda v: v >= 4
-    total_versions = 10
-    premiere = premiere_version_defectueuse(total_versions, api_test)
-    print(f"Sur {total_versions} versions, la première défectueuse est : {premiere}")
-    # Sortie attendue : 4
-```
+    # left pointe toujours vers la position d'insertion exacte
+    return left
 
----
 
-### C. Recherche sur l'espace des réponses (Ex: Racine carrée entière)
-Applique la recherche binaire non pas sur un tableau, mais sur un intervalle numérique `[0, x]`.
+def first_bad_version(n: int, bad_version_start: int) -> int:
+    """LeetCode 278 : Recherche de frontière monotone (première version défectueuse)."""
+    def is_bad_version(version: int) -> bool:
+        return version >= bad_version_start
 
-```python
-def racine_entiere(x: int) -> int:
+    low: int = 1
+    high: int = n
+
+    while low < high:
+        mid: int = low + (high - low) // 2
+        if is_bad_version(mid):
+            high = mid      # Peut être la première, on garde mid
+        else:
+            low = mid + 1   # Forcément après mid
+
+    return low
+
+
+def my_sqrt(x: int) -> int:
+    """LeetCode 69 : Racine carrée entière par recherche sur l'espace des réponses."""
     if x < 2:
         return x
-        
-    gauche, droite = 1, x // 2
-    
-    while gauche <= droite:
-        milieu = gauche + (droite - gauche) // 2
-        carre = milieu * milieu
-        if carre == x:
-            return milieu
-        elif carre < x:
-            gauche = milieu + 1
-        else:
-            droite = milieu - 1
-            
-    # 'droite' a croisé 'gauche' et pointe sur le plus grand entier dont le carré <= x
-    return droite
 
-# --- EXEMPLE PRÊT À LANCER ---
+    left: int = 1
+    right: int = x // 2
+
+    while left <= right:
+        mid: int = left + (right - left) // 2
+        square: int = mid * mid
+        if square == x:
+            return mid
+        elif square < x:
+            left = mid + 1
+        else:
+            right = mid - 1
+
+    # right s'arrête sur le plus grand entier dont le carré est <= x
+    return right
+
+
 if __name__ == "__main__":
-    for val in [4, 8, 16, 27]:
-        print(f"sqrt({val}) arrondi à l'inférieur = {racine_entiere(val)}")
-    # Sortie attendue : 2, 2, 4, 5
+    print("35. Search Insert :", search_insert([1, 3, 5, 6], 2))  # 1
+    print("278. First Bad Version :", first_bad_version(5, 4))  # 4
+    print("69. Sqrt(8) :", my_sqrt(8))  # 2
+    print("Astuce bisect :", bisect.bisect_left([1, 3, 5, 6], 2))  # 1
 ```
 
 ---
 
-## 2. Trucs et Astuces (Bibliothèque Standard)
+## 3. Bac à Sable Exercices (`main.py` — Section 2)
 
-* **Le module `bisect` intégré :** En Python, `bisect.bisect_left(nums, cible)` fait exactement le travail du Template A en C optimisé ! Utilise `bisect_left` pour la première occurrence et `bisect_right` pour la position juste après la dernière occurrence.
-* **Calcul sécurisé du milieu :** Écris `milieu = gauche + (droite - gauche) // 2`. Même si Python gère les grands entiers sans overflow, cette écriture montre aux recruteurs que tu maîtrises les bonnes pratiques d'ingénierie logicielle.
+```python
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
+
+def is_perfect_square(num: int) -> bool:
+    """LeetCode 367 : Valid Perfect Square."""
+    # TODO : Appliquer Binary Search entre 1 et num // 2 (si num >= 2)
+    pass
+
+
+if __name__ == "__main__":
+    # Décommente pour tester ton code :
+    # assert is_perfect_square(16) is True
+    # assert is_perfect_square(14) is False
+    pass
+```
 
 ---
 
-## 3. Pièges à éviter
+## 4. Trucs et Astuces Python
+- **Module standard `bisect` :**
+  - `bisect.bisect_left(nums, target)` renvoie le premier index où insérer `target` en gardant le tri (équivalent exact de LeetCode 35).
+  - `bisect.bisect_right(nums, target)` renvoie l'index juste après la dernière occurrence de `target`.
+- **Calcul de `mid` sans dépassement :** Écris `mid = left + (right - left) // 2` par réflexe d'entretien (même si Python gère les entiers de taille arbitraire).
 
-* **Boucle infinie avec `gauche = milieu` :** Si tu écris `while gauche < droite:` avec `milieu = (gauche + droite) // 2`, lorsque `droite == gauche + 1`, `milieu` vaut `gauche`. Si la branche `else` fait `gauche = milieu`, les bornes ne bougent plus jamais ! Déplace toujours `gauche = milieu + 1`.
-* **Mélanger les conditions de sortie :**
-  * Utilise `while gauche <= droite:` quand tu retournes directement depuis l'intérieur de la boucle (`if nums[milieu] == cible: return milieu`).
-  * Utilise `while gauche < droite:` quand tu réduis l'intervalle jusqu'à un seul élément survivant (`droite = milieu`).
-* **Oublier que le tableau doit être trié (ou monotone) :** Si l'énoncé donne un tableau non trié et demande une complexité $O(n)$, ne trie pas le tableau ($O(n \log n)$), utilise plutôt le **Hashing**.
+---
+
+## 5. Pièges à éviter
+- **Boucle infinie avec `while left < high` :** Si tu écris `low = mid` (sans `+ 1`), quand `high == low + 1`, `mid` vaut `low` et l'intervalle ne rétrécit jamais. Avec `low = mid`, il faut calculer `mid = low + (high - low + 1) // 2`.
+- **Mauvaise condition d'arrêt (`<=` vs `<`) :**
+  - Recherche exacte d'un élément pouvant être absent : `while left <= right:` avec `left = mid + 1` et `right = mid - 1`.
+  - Recherche d'une frontière garantie d'exister : `while low < high:` avec `high = mid` et `low = mid + 1`.

@@ -1,98 +1,115 @@
-# Stack (Pile) — Code, Astuces et Pièges
+# 💻 Pattern 3 : Stack — Squelettes, Code & Astuces
 
-## 1. Templates Python (Prêts à exécuter)
-
-### A. Validation de paires et imbrication (Parenthèses, balises)
-Empile les symboles ouvrants et vérifie la correspondance avec le sommet de la pile dès qu'un symbole fermant apparaît.
+## 1. Squelette Générique (Boilerplate)
 
 ```python
-def est_valide(s: str) -> bool:
-    pile = []
-    correspondances = {')': '(', ']': '[', '}': '{'}
-    
-    for char in s:
-        if char in correspondances:
-            # Si la pile est vide ou que le sommet ne correspond pas -> invalide
-            sommet = pile.pop() if pile else '#'
-            if correspondances[char] != sommet:
+def stack_skeleton(sequence: str) -> bool:
+    stack: list[str] = []
+    # Optionnel : dictionnaire de correspondance pour les fermetures
+    pairs: dict[str, str] = {")": "(", "]": "[", "}": "{"}
+
+    for item in sequence:
+        if item not in pairs:  # Ouverture ou élément à empiler
+            stack.append(item)
+        else:
+            # Vérifier que la pile n'est pas vide avant de consulter stack[-1]
+            if not stack or stack[-1] != pairs[item]:
                 return False
-        else:
-            pile.append(char)
-            
-    # La chaîne est valide uniquement si toutes les ouvertures ont été fermées
-    return len(pile) == 0
+            stack.pop()
 
-# --- EXEMPLE PRÊT À LANCER ---
-if __name__ == "__main__":
-    tests = ["()[]{}", "([)]", "{[]}", "((("]
-    for t in tests:
-        print(f"'{t}' -> {est_valide(t)}")
-    # Sortie attendue : True, False, True, False
+    return len(stack) == 0
 ```
 
 ---
 
-### B. Élimination de doublons adjacents ou annulations en chaîne
-Compare chaque nouvel élément avec le sommet de la pile (`pile[-1]`). S'ils s'annulent, dépile au lieu d'empiler.
+## 2. Démos Exécutables (`main.py` — Section 1)
+
+Code typé en anglais avec commentaires en français, prêt à être copié-collé et exécuté localement :
 
 ```python
-def supprimer_doublons_adjacents(s: str) -> str:
-    pile = []
-    
-    for char in s:
-        if pile and pile[-1] == char:
-            pile.pop()  # Annulation avec le caractère précédent
-        else:
-            pile.append(char)
-            
-    return "".join(pile)
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
 
-# --- EXEMPLE PRÊT À LANCER ---
+def is_valid_parentheses(s: str) -> bool:
+    """LeetCode 20 : Valide l'imbrication correcte des parenthèses."""
+    stack: list[str] = []
+    closing_to_opening: dict[str, str] = {")": "(", "]": "[", "}": "{"}
+
+    for char in s:
+        if char in closing_to_opening:
+            # Si la pile est vide ou le sommet ne correspond pas, c'est invalide
+            if not stack or stack[-1] != closing_to_opening[char]:
+                return False
+            stack.pop()
+        else:
+            # Caractère ouvrant : on l'empile
+            stack.append(char)
+
+    return not stack
+
+
+def remove_adjacent_duplicates(s: str) -> str:
+    """LeetCode 1047 : Supprime les paires de caractères identiques adjacents."""
+    stack: list[str] = []
+
+    for char in s:
+        # Si le sommet de la pile est identique au caractère courant, on annule les deux
+        if stack and stack[-1] == char:
+            stack.pop()
+        else:
+            stack.append(char)
+
+    return "".join(stack)
+
+
+def backspace_compare(s: str, t: str) -> bool:
+    """LeetCode 844 : Compare deux chaînes après simulation de la touche retour arrière (#)."""
+    def build_final_string(text: str) -> str:
+        stack: list[str] = []
+        for char in text:
+            if char != "#":
+                stack.append(char)
+            elif stack:
+                # On efface le dernier caractère uniquement si la pile n'est pas vide
+                stack.pop()
+        return "".join(stack)
+
+    return build_final_string(s) == build_final_string(t)
+
+
 if __name__ == "__main__":
-    chaine = "abbaca"
-    resultat = supprimer_doublons_adjacents(chaine)
-    print(f"Entrée : '{chaine}' -> Résultat : '{resultat}'")
-    # Détail : 'bb' s'annule -> 'aaca', puis 'aa' s'annule -> 'ca'
-    # Sortie attendue : 'ca'
+    print("20. Valid Parentheses :", is_valid_parentheses("({[]})"))  # True
+    print("1047. Remove Duplicates :", remove_adjacent_duplicates("abbaca"))  # "ca"
+    print("844. Backspace Compare :", backspace_compare("ab#c", "ad#c"))  # True
 ```
 
 ---
 
-### C. Simulation d'historique et d'opérations (Score / Backspace)
-Garde une trace séquentielle des états précédents pour pouvoir annuler ou combiner les dernières actions.
+## 3. Bac à Sable Exercices (`main.py` — Section 2)
 
 ```python
-def traiter_effacements(s: str) -> str:
-    pile = []
-    for char in s:
-        if char == '#':
-            if pile:  # Toujours vérifier que la pile n'est pas vide avant pop()
-                pile.pop()
-        else:
-            pile.append(char)
-    return "".join(pile)
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
 
-# --- EXEMPLE PRÊT À LANCER ---
+def cal_points(operations: list[str]) -> int:
+    """LeetCode 682 : Baseball Game."""
+    # TODO : Utiliser une pile pour enregistrer les scores et gérer 'C', 'D', '+'
+    pass
+
+
 if __name__ == "__main__":
-    s1, s2 = "ab#c", "ad#c"
-    res1, res2 = traiter_effacements(s1), traiter_effacements(s2)
-    print(f"'{s1}' devient '{res1}' | '{s2}' devient '{res2}'")
-    print(f"Sont-ils identiques ? -> {res1 == res2}")
-    # Sortie attendue : 'ac' == 'ac' -> True
+    # Décommente pour tester ton code :
+    # assert cal_points(["5", "2", "C", "D", "+"]) == 30
+    pass
 ```
 
 ---
 
-## 2. Trucs et Astuces (Bibliothèque Standard)
-
-* **Utilise une `list` Python standard :** En Python, `pile.append(x)` (push) et `pile.pop()` (pop) s'exécutent en temps amorti $O(1)$. N'utilise pas `queue.LifoQueue` en algorithmie (trop lent à cause des verrous de threads).
-* **Reconstruction rapide de chaîne :** Si ta pile contient des caractères, utilise `"".join(pile)` à la fin plutôt que de concaténer avec `+=` dans une boucle.
-* **Consultation du sommet :** Utilise `pile[-1]` pour lire le dernier élément sans le retirer, toujours précédé d'un test `if pile:`.
+## 4. Trucs et Astuces Python
+- **Utiliser une simple `list` Python :** En Python, `list.append()` et `list.pop()` (sans argument) s'exécutent en **$O(1)$ amorti**. Inutile d'importer `collections.deque` pour une pile simple.
+- **Vérification booléenne idiomatique :** Écris `if stack:` au lieu de `if len(stack) > 0:`, et `return not stack` au lieu de `return len(stack) == 0`.
+- **Reconstruction rapide de chaîne :** Accumule les caractères dans une liste `stack` et fais `"".join(stack)` tout à la fin en $O(n)$, plutôt que de concaténer des chaînes (`res += char`) qui coûte $O(n^2)$.
 
 ---
 
-## 3. Pièges à éviter
-
-* **Appeler `pile.pop()` ou `pile[-1]` sur une pile vide :** Cela provoque immédiatement une `IndexError: pop from empty list`. Protège toujours l'accès avec `if pile:`.
-* **Oublier de vérifier `not pile` à la fin :** Dans un problème de validation de parenthèses, une entrée comme `"((("` passera toute la boucle sans erreur mais laissera des éléments dans la pile. Retourne toujours `not pile` (ou `len(pile) == 0`).
-* **Confondre file (FIFO) et pile (LIFO) :** Si tu fais `pile.pop(0)`, la complexité chute à $O(n)$ car tous les éléments sont décalés en mémoire. Pour une file, utilise `collections.deque` avec `popleft()`.
+## 5. Pièges à éviter
+- **`IndexError: pop from empty list` :** Toujours vérifier `if stack:` avant d'appeler `stack.pop()` ou de lire le sommet `stack[-1]` (par exemple sur `"]"` ou `"#"` en début de chaîne).
+- **Oublier les éléments restants :** Sur un problème de parenthèses comme `"((("`, la boucle se termine sans erreur, mais la pile n'est pas vide. Le retour doit toujours vérifier `not stack`.

@@ -1,94 +1,132 @@
-# 17. Prefix & Suffix Sum — Code, Astuces et Pièges
+# 💻 Pattern 6 : Prefix / Suffix Sum — Squelettes, Code & Astuces
 
-## 1. Templates Python (Prêts à exécuter)
+## 1. Squelettes Génériques (Boilerplates)
 
-### Template A : Précalcul des requêtes de plage (Prefix Sum classique)
-Idéal pour répondre en $O(1)$ à des requêtes de somme entre `left` et `right` inclus.
-
+### Squelette A : Tableau de sommes préfixes (`prefix` de taille `n + 1`)
 ```python
-from itertools import accumulate
+def prefix_sum_skeleton(nums: list[int]) -> list[int]:
+    n: int = len(nums)
+    prefix: list[int] = [0] * (n + 1)
 
-
-class RequeteSommePlage:
-    def __init__(self, nums: list[int]):
-        # initial=0 ajoute automatiquement le 0 en tête de liste
-        self.prefix = list(accumulate(nums, initial=0))
-
-    def somme_plage(self, left: int, right: int) -> int:
-        return self.prefix[right + 1] - self.prefix[left]
-
-
-if __name__ == "__main__":
-    nums = [-2, 0, 3, -5, 2, -1]
-    requeteur = RequeteSommePlage(nums)
-    print("Somme [0, 2] :", requeteur.somme_plage(0, 2))  # Attendu : 1
-    print("Somme [2, 5] :", requeteur.somme_plage(2, 5))  # Attendu : -1
-```
-
-### Template B : Prefix + Suffix (Calcul gauche et droite sans l'élément courant)
-Idéal pour calculer une valeur basée sur tous les éléments sauf `nums[i]`, sans utiliser la division.
-
-```python
-def produit_sauf_soi_meme(nums: list[int]) -> list[int]:
-    n = len(nums)
-    resultat = [1] * n
-
-    # 1. Passe gauche -> droite (Prefix)
-    prefix = 1
     for i in range(n):
-        resultat[i] = prefix
-        prefix *= nums[i]
+        prefix[i + 1] = prefix[i] + nums[i]
 
-    # 2. Passe droite -> gauche (Suffix)
-    suffix = 1
-    for i in range(n - 1, -1, -1):
-        resultat[i] *= suffix
-        suffix *= nums[i]
-
-    return resultat
-
-
-if __name__ == "__main__":
-    entree = [1, 2, 3, 4]
-    print("Entrée  :", entree)
-    print("Sortie  :", produit_sauf_soi_meme(entree))  # Attendu : [24, 12, 8, 6]
+    # Somme de l'index left à right inclus en O(1) :
+    # range_sum = prefix[right + 1] - prefix[left]
+    return prefix
 ```
 
-### Template C : Prefix Sum + Hashing (Sous-tableaux de somme égale à K)
-Indispensable dès que le tableau contient des nombres **négatifs** (où Sliding Window échoue).
-
+### Squelette B : Prefix Sum + Hashing (Sous-tableaux de somme K)
 ```python
 from collections import defaultdict
 
-
-def compter_sous_tableaux_somme_k(nums: list[int], k: int) -> int:
-    compteur_prefixes = defaultdict(int)
-    compteur_prefixes[0] = 1  # Cas où le sous-tableau démarre à l'index 0
-
-    somme_courante = 0
-    total_sous_tableaux = 0
+def prefix_sum_hashing_skeleton(nums: list[int], k: int) -> int:
+    prefix_counts: dict[int, int] = defaultdict(int)
+    prefix_counts[0] = 1  # Cas où le sous-tableau démarre à l'index 0
+    current_sum: int = 0
+    total_subarrays: int = 0
 
     for num in nums:
-        somme_courante += num
-        # Si (somme_courante - k) a déjà été vue, alors un sous-tableau intermédiaire vaut k
-        total_sous_tableaux += compteur_prefixes[somme_courante - k]
-        compteur_prefixes[somme_courante] += 1
+        current_sum += num
+        total_subarrays += prefix_counts[current_sum - k]
+        prefix_counts[current_sum] += 1
 
-    return total_sous_tableaux
+    return total_subarrays
+```
+
+---
+
+## 2. Démos Exécutables (`main.py` — Section 1)
+
+Code typé en anglais avec commentaires en français, prêt à être copié-collé et exécuté localement :
+
+```python
+from collections import defaultdict
+from itertools import accumulate
+
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
+
+class NumArray:
+    """LeetCode 303 : Requêtes de sommes sur plages en O(1) après précalcul O(n)."""
+
+    def __init__(self, nums: list[int]) -> None:
+        # accumulate(..., initial=0) construit directement [0, n0, n0+n1, ...]
+        self.prefix: list[int] = list(accumulate(nums, initial=0))
+
+    def sum_range(self, left: int, right: int) -> int:
+        return self.prefix[right + 1] - self.prefix[left]
+
+
+def product_except_self(nums: list[int]) -> list[int]:
+    """LeetCode 238 : Produit de tous les éléments sauf nums[i] en O(1) espace extra."""
+    n: int = len(nums)
+    result: list[int] = [1] * n
+
+    # Passe 1 : Produits des préfixes (tout ce qui est à gauche de i)
+    left_product: int = 1
+    for i in range(n):
+        result[i] = left_product
+        left_product *= nums[i]
+
+    # Passe 2 : Multiplication par les produits des suffixes (tout ce qui est à droite)
+    right_product: int = 1
+    for i in range(n - 1, -1, -1):
+        result[i] *= right_product
+        right_product *= nums[i]
+
+    return result
+
+
+def subarray_sum_k(nums: list[int], k: int) -> int:
+    """LeetCode 560 : Nombre de sous-tableaux contigus dont la somme vaut k."""
+    prefix_counts: dict[int, int] = defaultdict(int)
+    prefix_counts[0] = 1
+    current_sum: int = 0
+    count: int = 0
+
+    for num in nums:
+        current_sum += num
+        # Si (current_sum - k) a déjà été vu, la tranche intermédiaire somme à k
+        count += prefix_counts[current_sum - k]
+        prefix_counts[current_sum] += 1
+
+    return count
 
 
 if __name__ == "__main__":
-    nums = [1, 2, 3, -2, 2]
-    k = 3
-    print("Nombre de sous-tableaux de somme", k, ":", compter_sous_tableaux_somme_k(nums, k))  # Attendu : 4
+    na = NumArray([-2, 0, 3, -5, 2, -1])
+    print("303. Sum Range (0, 2) :", na.sum_range(0, 2))  # 1
+    print("238. Product Except Self :", product_except_self([1, 2, 3, 4]))  # [24, 12, 8, 6]
+    print("560. Subarray Sum K :", subarray_sum_k([1, -1, 0], 0))  # 3
 ```
 
-## 2. Trucs et Astuces (Bibliothèque Standard)
-* **`itertools.accumulate(nums, initial=0)` :** Génère le tableau préfixe de taille `n + 1` en une seule ligne en C pur, bien plus rapide qu'une boucle `for` manuelle.
-* **Le `0` initial sauve la vie :** Toujours créer un tableau `prefix` de taille `n + 1` avec `prefix[0] = 0`. Cela évite d'écrire une condition `if left == 0:` dans la formule `prefix[right + 1] - prefix[left]`.
-* **Somme totale = `prefix[-1]` :** Pas besoin de refaire `sum(nums)` si tu as déjà construit `prefix`. La somme de droite à partir de `i` vaut simplement `prefix[-1] - prefix[i + 1]`.
+---
 
-## 3. Pièges à Éviter
-* **Confusion d'indices (+1 / -1) :** Dans un tableau `prefix` de taille `n + 1`, `prefix[i]` représente la somme des `i` premiers éléments (indices `0` à `i - 1`). La somme inclusive de `left` à `right` est toujours `prefix[right + 1] - prefix[left]`.
-* **Utiliser Sliding Window avec des nombres négatifs :** Si l'énoncé demande un sous-tableau de somme `k` et que `nums` contient des négatifs, Sliding Window ne fonctionne pas car la somme n'est pas monotone. Utilise le **Template C (Prefix Sum + Hashing)**.
-* **Oublier `compteur_prefixes[0] = 1` :** Dans le Template C, oublier cette initialisation rate tous les sous-tableaux valides qui commencent dès l'index `0`.
+## 3. Bac à Sable Exercices (`main.py` — Section 2)
+
+```python
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
+
+def largest_altitude(gain: list[int]) -> int:
+    """LeetCode 1732 : Find the Highest Altitude."""
+    # TODO : Calculer la somme cumulée en partant de 0 et garder le maximum
+    pass
+
+
+if __name__ == "__main__":
+    # Décommente pour tester ton code :
+    # assert largest_altitude([-5, 1, 5, 0, -7]) == 1
+    pass
+```
+
+---
+
+## 4. Trucs et Astuces Python
+- **`itertools.accumulate(nums, initial=0)` :** Génère en une seule ligne optimisée en C le tableau `prefix` de taille `n + 1` commençant par `0`.
+- **La sentinelle `prefix[0] = 0` :** Prévoir une case supplémentaire à l'index `0` évite d'écrire un `if left == 0:` spécial lors du calcul `prefix[right + 1] - prefix[left]`.
+
+---
+
+## 5. Pièges à éviter
+- **Oublier `prefix_counts[0] = 1` dans LeetCode 560 :** Sans cette initialisation, tout sous-tableau valide qui commence dès l'index `0` (où `current_sum == k`, donc `current_sum - k == 0`) ne sera jamais comptabilisé.
+- **Mettre à jour `prefix_counts[current_sum]` avant de lire `prefix_counts[current_sum - k]` :** Si `k == 0`, tu compterais le sous-tableau vide de longueur 0 ! Toujours lire le dictionnaire **avant** d'y ajouter la somme courante.

@@ -1,95 +1,115 @@
-# Sorting Intervals — Code Exécutable, Astuces et Pièges
+# 💻 Pattern 8 : Sorting Intervals — Squelettes, Code & Astuces
 
-## 1. Templates Python Prêts à Lancer
+## 1. Squelette Générique (Boilerplate)
 
-### Template A : Fusionner des intervalles qui se chevauchent
 ```python
-def fusionner_intervalles(intervals: list[list[int]]) -> list[list[int]]:
+def merge_intervals_skeleton(intervals: list[list[int]]) -> list[list[int]]:
     if not intervals:
         return []
-    
-    # Tri par heure de début croissante
-    intervals.sort(key=lambda x: x[0])
-    fusionnes = [intervals[0]]
-    
-    for debut, fin in intervals[1:]:
-        dernier_fin = fusionnes[-1][1]
-        if debut <= dernier_fin:
-            # Chevauchement : on étend la fin du dernier intervalle
-            fusionnes[-1][1] = max(dernier_fin, fin)
-        else:
-            fusionnes.append([debut, fin])
-            
-    return fusionnes
 
-if __name__ == "__main__":
-    entree = [[1, 3], [8, 10], [2, 6], [15, 18]]
-    print("Intervalles fusionnés :", fusionner_intervalles(entree))
-    # Sortie attendue : [[1, 6], [8, 10], [15, 18]]
+    # Trier par heure de début
+    intervals.sort(key=lambda x: x[0])
+    merged: list[list[int]] = [intervals[0]]
+
+    for start, end in intervals[1:]:
+        last_end = merged[-1][1]
+        if start <= last_end:  # Chevauchement
+            merged[-1][1] = max(last_end, end)
+        else:  # Disjoint
+            merged.append([start, end])
+
+    return merged
 ```
 
-### Template B : Intersection de deux listes d'intervalles (Two Pointers)
+---
+
+## 2. Démos Exécutables & Bac à Sable (`main.py`)
+
 ```python
-def intersection_intervalles(firstList: list[list[int]], secondList: list[list[int]]) -> list[list[int]]:
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
+
+def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:
+    """LeetCode 56 : Fusionne tous les intervalles qui se chevauchent."""
+    if not intervals:
+        return []
+    intervals.sort(key=lambda x: x[0])
+    merged: list[list[int]] = [intervals[0]]
+
+    for start, end in intervals[1:]:
+        if start <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], end)
+        else:
+            merged.append([start, end])
+    return merged
+
+
+def interval_intersection(
+    first_list: list[list[int]], second_list: list[list[int]]
+) -> list[list[int]]:
+    """LeetCode 986 : Intersection de deux listes d'intervalles disjoints et triés."""
     i, j = 0, 0
-    resultat = []
-    
-    while i < len(firstList) and j < len(secondList):
-        debut = max(firstList[i][0], secondList[j][0])
-        fin = min(firstList[i][1], secondList[j][1])
-        
-        if debut <= fin:
-            resultat.append([debut, fin])
-            
-        # On avance le pointeur de l'intervalle qui se termine le premier
-        if firstList[i][1] < secondList[j][1]:
+    result: list[list[int]] = []
+
+    while i < len(first_list) and j < len(second_list):
+        start_max = max(first_list[i][0], second_list[j][0])
+        end_min = min(first_list[i][1], second_list[j][1])
+
+        if start_max <= end_min:
+            result.append([start_max, end_min])
+
+        # Avancer le pointeur de l'intervalle qui se termine le plus tôt
+        if first_list[i][1] < second_list[j][1]:
             i += 1
         else:
             j += 1
-            
-    return resultat
 
-if __name__ == "__main__":
-    A = [[0, 2], [5, 10], [13, 23], [24, 25]]
-    B = [[1, 5], [8, 12], [15, 24], [25, 26]]
-    print("Intersections :", intersection_intervalles(A, B))
-    # Sortie attendue : [[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]
-```
+    return result
 
-### Template C : Minimum de flèches pour éclater des ballons (Tri par fin)
-```python
-def min_fleches(points: list[list[int]]) -> int:
+
+def find_min_arrow_shots(points: list[list[int]]) -> int:
+    """LeetCode 452 : Nombre minimal de flèches pour éclater tous les ballons."""
     if not points:
         return 0
-        
-    # Tri glouton par extrémité droite croissante
+    # Tri par borne de fin croissante (choix glouton optimal)
     points.sort(key=lambda x: x[1])
-    fleches = 1
-    pos_fleche = points[0][1]
-    
-    for debut, fin in points[1:]:
-        if debut > pos_fleche:
-            fleches += 1
-            pos_fleche = fin
-            
-    return fleches
+    arrows = 1
+    current_end = points[0][1]
+
+    for start, end in points[1:]:
+        if start > current_end:
+            arrows += 1
+            current_end = end
+
+    return arrows
+
+
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
+
+def find_poisoned_duration(time_series: list[int], duration: int) -> int:
+    """LeetCode 495 : Teemo Attacking. À compléter !"""
+    pass
+
 
 if __name__ == "__main__":
-    ballons = [[10, 16], [2, 8], [1, 6], [7, 12]]
-    print("Minimum de flèches :", min_fleches(ballons))
-    # Sortie attendue : 2
+    print("Merge :", merge_intervals([[1, 3], [2, 6], [8, 10], [15, 18]]))
+    print(
+        "Intersection :",
+        interval_intersection([[0, 2], [5, 10]], [[1, 5], [8, 12]]),
+    )
+    print("Arrows :", find_min_arrow_shots([[10, 16], [2, 8], [1, 6], [7, 12]]))
+    # assert find_poisoned_duration([1, 4], 2) == 4
 ```
 
 ---
 
-## 2. Trucs et Astuces Python
-* **Tri par défaut sur les listes de paires :** En Python, `intervals.sort()` trie naturellement par le premier élément `x[0]`, puis départage en cas d'égalité par `x[1]`. Pas besoin de `lambda` si tu tries par début croissant.
-* **Tri par fin explicite :** Pour trier par la fin, utilise `intervals.sort(key=lambda x: x[1])` qui est lisible et rapide en C.
-* **Insérer un intervalle en $O(n)$ :** Si la liste est déjà triée (comme dans l'exercice **57**), découpe le problème en 3 boucles `while` séquentielles : tout ce qui finit avant `newInterval[0]`, tout ce qui chevauche `newInterval`, puis tout le reste.
+## 3. Trucs et Astuces Python
+- **Tri par fin (`key=lambda x: x[1]`) vs début (`key=lambda x: x[0]`) :**
+  - Pour **fusionner** des intervalles (`Merge`), trie par **début** (`x[0]`).
+  - Pour **compter le max d'intervalles sans chevauchement** ou tirer un minimum de flèches (`Arrows`), trie par **fin** (`x[1]`).
+- **Formule universelle d'intersection :** Deux intervalles `[a, b]` et `[c, d]` se croisent si et seulement si `max(a, c) <= min(b, d)`.
 
 ---
 
-## 3. Pièges à Éviter
-* **Oublier `max()` lors de la fusion :** Si `[1, 10]` est suivi de `[2, 5]`, la nouvelle fin n'est pas `5`, mais `max(10, 5) = 10`.
-* **Inégalité stricte vs large (`<` vs `<=`) :** Vérifie toujours dans l'énoncé si `[1, 4]` et `[4, 5]` sont considérés comme se chevauchant (`<=`) ou disjoints (`<`). Dans la majorité des problèmes LeetCode (dont **56**, **57**, **452**, **986**), un point de contact compte comme un chevauchement (`<=`).
-* **Trier par début pour les problèmes de comptage maximal :** Pour compter le maximum de réunions possibles ou le minimum de flèches (**452**), trier par heure de début échoue sur un long intervalle `[1, 100]` qui bloque tout. Trie toujours par heure de **fin**.
+## 4. Pièges à éviter
+- **Oublier `max(last_end, end)` lors de la fusion :** Si `[1, 10]` est suivi de `[2, 5]`, la borne de fin reste `10`, pas `5` !
+- **Modifier la liste pendant l'itération :** Construis toujours une nouvelle liste `merged` plutôt que de faire `.pop()` dans `intervals` en cours de boucle (coût $O(n)$ par suppression).

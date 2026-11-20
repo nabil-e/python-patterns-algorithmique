@@ -1,119 +1,146 @@
-# Sliding Window — Code, Astuces et Pièges
+# 💻 Pattern 5 : Sliding Window — Squelettes, Code & Astuces
 
-## 1. Templates Python (Prêts à exécuter)
+## 1. Squelettes Génériques (Boilerplates)
 
-### A. Fenêtre de taille fixe $k$ (Somme ou moyenne maximale)
-Calcule la première fenêtre de taille $k$, puis fais-la glisser d'un cran à chaque itération en ajoutant l'élément entrant et en retirant l'élément sortant.
-
+### Squelette A : Fenêtre de taille fixe `k`
 ```python
-def moyenne_maximale(nums: list[int], k: int) -> float:
-    # 1. Initialiser la première fenêtre [0 ... k-1]
-    somme_fenetre = sum(nums[:k])
-    max_somme = somme_fenetre
-    
-    # 2. Faire glisser la fenêtre de l'index k jusqu'à la fin
-    for droite in range(k, len(nums)):
-        # Ajoute le nouvel élément à droite, retire l'ancien à gauche (droite - k)
-        somme_fenetre += nums[droite] - nums[droite - k]
-        if somme_fenetre > max_somme:
-            max_somme = somme_fenetre
-            
-    return max_somme / k
+def sliding_window_fixed_skeleton(nums: list[int], k: int) -> float:
+    window_sum: int = 0
+    best: float = float("-inf")
 
-# --- EXEMPLE PRÊT À LANCER ---
-if __name__ == "__main__":
-    donnees = [1, 12, -5, -6, 50, 3]
-    k = 4
-    resultat = moyenne_maximale(donnees, k)
-    print(f"Tableau : {donnees}, k = {k}")
-    print(f"Moyenne maximale sur {k} éléments : {resultat}")
-    # Sortie attendue : 12.75 (sous-tableau [12, -5, -6, 50])
+    for right in range(len(nums)):
+        window_sum += nums[right]  # 1. Entrée à droite
+
+        if right >= k - 1:         # 2. Taille k atteinte
+            best = max(best, window_sum)
+            window_sum -= nums[right - k + 1]  # 3. Sortie à gauche
+
+    return best
+```
+
+### Squelette B : Fenêtre de taille variable (dynamique)
+```python
+from collections import defaultdict
+
+def sliding_window_variable_skeleton(s: str) -> int:
+    counts: dict[str, int] = defaultdict(int)
+    left: int = 0
+    max_len: int = 0
+
+    for right in range(len(s)):
+        counts[s[right]] += 1  # 1. Agrandir par la droite
+
+        while len(counts) > 2:  # 2. Rétrécir tant que la condition est violée
+            counts[s[left]] -= 1
+            if counts[s[left]] == 0:
+                del counts[s[left]]
+            left += 1
+
+        max_len = max(max_len, right - left + 1)  # 3. Mettre à jour le record
+
+    return max_len
 ```
 
 ---
 
-### B. Fenêtre de taille fixe avec suivi d'unicité (Hashing + Fenêtre)
-Maintient un dictionnaire de fréquences sur une fenêtre de taille $k$ pour vérifier rapidement si tous les éléments sont distincts.
+## 2. Démos Exécutables (`main.py` — Section 1)
+
+Code typé en anglais avec commentaires en français, prêt à être copié-collé et exécuté localement :
 
 ```python
 from collections import defaultdict
 
-def compter_sous_chaines_distinctes(s: str, k: int = 3) -> int:
-    if len(s) < k:
-        return 0
-        
-    compteur = defaultdict(int)
-    resultat = 0
-    
-    for droite in range(len(s)):
-        # 1. Entrée du caractère de droite
-        compteur[s[droite]] += 1
-        
-        # 2. Si la fenêtre dépasse la taille k, on retire le caractère de gauche
-        if droite >= k:
-            char_gauche = s[droite - k]
-            compteur[char_gauche] -= 1
-            if compteur[char_gauche] == 0:
-                del compteur[char_gauche]  # Crucial pour que len(compteur) reste exact
-                
-        # 3. Une fois la taille k atteinte, on vérifie la validité
-        if droite >= k - 1 and len(compteur) == k:
-            resultat += 1
-            
-    return resultat
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
 
-# --- EXEMPLE PRÊT À LANCER ---
+def find_max_average(nums: list[int], k: int) -> float:
+    """LeetCode 643 : Moyenne maximale d'un sous-tableau contigu de taille k."""
+    current_sum: int = sum(nums[:k])
+    max_sum: int = current_sum
+
+    for right in range(k, len(nums)):
+        # On ajoute le nouvel élément entrant et on retire l'élément sortant à gauche
+        current_sum += nums[right] - nums[right - k]
+        if current_sum > max_sum:
+            max_sum = current_sum
+
+    return max_sum / k
+
+
+def count_good_substrings(s: str) -> int:
+    """LeetCode 1876 : Sous-chaînes de taille 3 avec 3 caractères distincts."""
+    counts: dict[str, int] = defaultdict(int)
+    good_count: int = 0
+
+    for right, char in enumerate(s):
+        counts[char] += 1
+
+        if right >= 3:
+            left_char: str = s[right - 3]
+            counts[left_char] -= 1
+            if counts[left_char] == 0:
+                del counts[left_char]
+
+        # À partir de l'index 2, la fenêtre contient exactement 3 caractères
+        if right >= 2 and len(counts) == 3:
+            good_count += 1
+
+    return good_count
+
+
+def length_of_longest_substring(s: str) -> int:
+    """LeetCode 3 : Plus longue sous-chaîne sans caractère répété (fenêtre variable)."""
+    seen: set[str] = set()
+    left: int = 0
+    max_length: int = 0
+
+    for right, char in enumerate(s):
+        # Tant que le caractère entrant est déjà présent, on rétrécit par la gauche
+        while char in seen:
+            seen.remove(s[left])
+            left += 1
+
+        seen.add(char)
+        max_length = max(max_length, right - left + 1)
+
+    return max_length
+
+
 if __name__ == "__main__":
-    chaine = "aababcabc"
-    nb = compter_sous_chaines_distinctes(chaine, 3)
-    print(f"Chaîne : '{chaine}'")
-    print(f"Nombre de sous-chaînes de taille 3 avec caractères distincts : {nb}")
-    # Sortie attendue : 4 ('abc', 'bca', 'cab', 'abc')
+    print("643. Max Average :", find_max_average([1, 12, -5, -6, 50, 3], 4))  # 12.75
+    print("1876. Good Substrings :", count_good_substrings("xyzzaz"))  # 1
+    print("3. Longest Substring :", length_of_longest_substring("abcabcbb"))  # 3
 ```
 
 ---
 
-### C. Fenêtre de taille variable (Plus long sous-tableau sans doublon)
-Étend la borne `droite` à chaque tour et contracte la borne `gauche` avec une boucle `while` dès qu'une contrainte est violée.
+## 3. Bac à Sable Exercices (`main.py` — Section 2)
 
 ```python
-def longueur_max_sans_doublon(s: str) -> int:
-    vus = set()
-    gauche = 0
-    max_longueur = 0
-    
-    for droite in range(len(s)):
-        # Tant que la fenêtre est invalide (doublon présent), on rétrécit par la gauche
-        while s[droite] in vus:
-            vus.remove(s[gauche])
-            gauche += 1
-            
-        # On ajoute le nouvel élément et on met à jour le record
-        vus.add(s[droite])
-        max_longueur = max(max_longueur, droite - gauche + 1)
-        
-    return max_longueur
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
 
-# --- EXEMPLE PRÊT À LANCER ---
+def minimum_recolors(blocks: str, k: int) -> int:
+    """LeetCode 2379 : Minimum Recolors to Get K Consecutive Black Blocks."""
+    # TODO : Compter les 'W' dans une fenêtre glissante de taille fixe k
+    pass
+
+
 if __name__ == "__main__":
-    texte = "abcabcbb"
-    longueur = longueur_max_sans_doublon(texte)
-    print(f"Texte : '{texte}' -> Plus longue sous-chaîne sans doublon : {longueur}")
-    # Sortie attendue : 3 ('abc')
+    # Décommente pour tester ton code :
+    # assert minimum_recolors("WBBWWBBWBW", 7) == 3
+    pass
 ```
 
 ---
 
-## 2. Trucs et Astuces (Bibliothèque Standard)
-
-* **Formule d'or de la taille d'une fenêtre :** Entre deux index inclusifs `gauche` et `droite`, le nombre d'éléments est toujours `droite - gauche + 1`.
-* **Calcul de l'index sortant sur fenêtre fixe :** Si ta fenêtre a une taille fixe $k$ et que ton pointeur courant est `droite`, l'élément qui sort tout à gauche est toujours à l'index `droite - k`.
-* **Privilégie le glissement incrémental au slicing :** Ne fais jamais `sum(nums[i:i+k])` à l'intérieur d'une boucle, car le slicing copie $k$ éléments et dégrade ton algorithme de $O(n)$ à $O(n 	imes k)$.
+## 4. Trucs et Astuces Python
+- **Formule de longueur de fenêtre :** Entre `left` et `right` inclus, il y a toujours `right - left + 1` éléments.
+- **Nettoyage des clés à zéro :** Quand tu utilises `defaultdict(int)` ou `Counter` pour compter les éléments distincts dans la fenêtre via `len(counts)`, n'oublie jamais de faire `del counts[left_char]` dès que son compteur tombe à `0`.
+- **Optimisation par saut d'index :** Pour LeetCode 3, stocker le dernier index vu dans un `dict[str, int]` permet de faire `left = max(left, last_seen[char] + 1)` en $O(1)$ au lieu d'une boucle `while`.
 
 ---
 
-## 3. Pièges à éviter
-
-* **Oublier de supprimer les clés à zéro dans le dictionnaire :** Si tu utilises `len(compteur)` pour connaître le nombre d'éléments uniques dans la fenêtre, un caractère tombé à `0` restera compté dans `len()` si tu ne fais pas `del compteur[char]`.
-* **Mettre à jour le résultat avant de réparer la fenêtre :** Dans une fenêtre variable, exécute toujours la boucle `while` de contraction **avant** de calculer `max_longueur = max(max_longueur, droite - gauche + 1)`.
-* **Utiliser une fenêtre glissante sur des nombres négatifs pour une somme cible :** Si l'énoncé demande un sous-tableau dont la somme vaut $K$ et que le tableau contient des nombres négatifs, agrandir la fenêtre n'augmente pas forcément la somme. Utilise alors **Prefix Sum + Hashing**.
+## 5. Pièges à éviter
+- **Utiliser Sliding Window variable avec des nombres négatifs :** Si la condition porte sur une somme cible et que le tableau contient des négatifs, agrandir la fenêtre ne garantit plus d'augmenter la somme. Utilise **Prefix Sum + Hashing** à la place.
+- **Décalage d'index de sortie (`right - k` vs `right - k + 1`) :**
+  - Si tu mets à jour le résultat **avant** de retirer l'élément sortant : l'élément qui sort est à `right - k + 1`.
+  - Si tu retires l'élément sortant **avant** d'évaluer la fenêtre courante (comme dans `count_good_substrings` ci-dessus) : l'élément qui sort est à `right - k`.

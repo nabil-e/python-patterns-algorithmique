@@ -1,101 +1,111 @@
-# Heap (Tas Binaire) : Code, Astuces et Pièges
+# 💻 Pattern 9 : Heap (Tas Binaire) — Squelettes, Code & Astuces
 
----
+## 1. Squelettes Génériques (Boilerplates)
 
-## 1. Templates Python Prêts à Lancer
-
-Le module standard `heapq` implémente uniquement un **Min-Heap** (le plus petit élément est toujours à l'index `0`).
-
-### Modèle A : Max-Heap simulé (Négation des valeurs)
-Pour simuler un Max-Heap en Python, il suffit d'inverser le signe des nombres avant de les insérer, puis de ré-inverser à la sortie.
-
+### Squelette A : Top K éléments (Min-Heap de taille K)
 ```python
 import heapq
 
-def derniere_pierre(stones: list[int]) -> int:
-    # Transformer en Max-Heap en rendant les valeurs négatives
-    max_heap = [-s for s in stones]
-    heapq.heapify(max_heap) # O(n)
-    
-    while len(max_heap) > 1:
-        y = -heapq.heappop(max_heap) # La plus lourde
-        x = -heapq.heappop(max_heap) # La deuxième plus lourde
-        
-        if x != y:
-            heapq.heappush(max_heap, -(y - x))
-            
-    return -max_heap[0] if max_heap else 0
 
-if __name__ == "__main__":
-    pierres = [2, 7, 4, 1, 8, 1]
-    print("Poids de la dernière pierre :", derniere_pierre(pierres))
-    # Sortie attendue : 1
-```
-
-### Modèle B : Top K Plus Grands Éléments (Min-Heap de taille K)
-Pour garder les `K` plus grands éléments sans trier tout le tableau (`O(n log k)`), on utilise un **Min-Heap de taille fixe K**. La racine est le "garde-fou" (le plus petit des K meilleurs).
-
-```python
-import heapq
-
-def k_ieme_plus_grand(nums: list[int], k: int) -> int:
-    min_heap = []
-    
+def heap_top_k_skeleton(nums: list[int], k: int) -> int:
+    min_heap: list[int] = []
     for num in nums:
         heapq.heappush(min_heap, num)
-        # Si on dépasse la taille k, on éjecte le plus petit
         if len(min_heap) > k:
-            heapq.heappop(min_heap)
-            
-    # La racine est le k-ième plus grand élément
-    return min_heap[0]
-
-if __name__ == "__main__":
-    tableau = [3, 2, 1, 5, 6, 4]
-    k = 2
-    print(f"Le {k}-ième plus grand élément est :", k_ieme_plus_grand(tableau, k))
-    # Sortie attendue : 5
+            heapq.heappop(min_heap)  # Éjecte le plus petit
+    return min_heap[0]  # Le K-ième plus grand élément
 ```
 
-### Modèle C : Top K Éléments Fréquents (Hashing + Heap)
-
+### Squelette B : Simulation dynamique (Max-Heap via négation)
 ```python
 import heapq
-from collections import Counter
 
-def top_k_frequents(nums: list[int], k: int) -> list[int]:
-    compteur = Counter(nums)
-    min_heap = []
-    
-    for valeur, freq in compteur.items():
-        # Le tas trie selon le premier élément du tuple (la fréquence)
-        heapq.heappush(min_heap, (freq, valeur))
-        if len(min_heap) > k:
-            heapq.heappop(min_heap)
-            
-    return [valeur for freq, valeur in min_heap]
 
-if __name__ == "__main__":
-    nums = [1, 1, 1, 2, 2, 3]
-    print("Top 2 fréquents :", top_k_frequents(nums, 2))
-    # Sortie attendue : [2, 1] (ordre quelconque)
+def max_heap_skeleton(nums: list[int]) -> int:
+    max_heap: list[int] = [-x for x in nums]
+    heapq.heapify(max_heap)
+
+    while len(max_heap) > 1:
+        first = -heapq.heappop(max_heap)
+        second = -heapq.heappop(max_heap)
+        if first != second:
+            heapq.heappush(max_heap, -(first - second))
+
+    return -max_heap[0] if max_heap else 0
 ```
 
 ---
 
-## 2. Trucs et Astuces Python (`heapq`)
+## 2. Démos Exécutables & Bac à Sable (`main.py`)
 
-* **`heapq.heapify(liste)` en O(n) :** Ne fais jamais une boucle `for x in liste: heapq.heappush(tas, x)` pour initialiser un tas (ce qui coûte `O(n log n)`). Utilise `heapify` directement sur la liste en place, c'est linéaire en temps (`O(n)`).
-* **`heapq.heappushpop(tas, item)` :** Plus rapide que d'appeler `heappush` puis `heappop` séparément, car il n'effectue qu'un seul rééquilibrage de l'arbre.
-* **`heapq.nsmallest(k, iterable)` et `heapq.nlargest(k, iterable)` :** Fonctions natives très pratiques pour un code ultra-concis sur des petits `k`, bien qu'en entretien il soit préférable de montrer la gestion manuelle du tas.
-* **Tuples dans un tas :** Python compare les tuples élément par élément de gauche à droite. Mets toujours la clé de tri (priorité, distance, fréquence) en **première position** du tuple : `(priorite, donnee)`.
+```python
+from collections import Counter
+import heapq
+
+
+# --- 1. DÉMOS DU PATTERN (Exécutables) ---
+
+def find_kth_largest(nums: list[int], k: int) -> int:
+    """LeetCode 215 : K-ième plus grand élément en O(n log k)."""
+    min_heap: list[int] = []
+    for num in nums:
+        heapq.heappush(min_heap, num)
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+    return min_heap[0]
+
+
+def last_stone_weight(stones: list[int]) -> int:
+    """LeetCode 1046 : Simulation avec Max-Heap par négation."""
+    max_heap = [-s for s in stones]
+    heapq.heapify(max_heap)
+
+    while len(max_heap) > 1:
+        heavy1 = -heapq.heappop(max_heap)
+        heavy2 = -heapq.heappop(max_heap)
+        if heavy1 != heavy2:
+            heapq.heappush(max_heap, -(heavy1 - heavy2))
+
+    return -max_heap[0] if max_heap else 0
+
+
+def top_k_frequent(nums: list[int], k: int) -> list[int]:
+    """LeetCode 347 : Mix Hashing (Counter) + Heap."""
+    counts = Counter(nums)
+    min_heap: list[tuple[int, int]] = []
+
+    for num, freq in counts.items():
+        heapq.heappush(min_heap, (freq, num))
+        if len(min_heap) > k:
+            heapq.heappop(min_heap)
+
+    return [num for freq, num in min_heap]
+
+
+# --- 2. BAC À SABLE EXERCICES (À compléter) ---
+
+def k_closest(points: list[list[int]], k: int) -> list[list[int]]:
+    """LeetCode 973 : K Closest Points to Origin. À compléter !"""
+    pass
+
+
+if __name__ == "__main__":
+    print("2nd largest :", find_kth_largest([3, 2, 1, 5, 6, 4], 2))  # 5
+    print("Last stone :", last_stone_weight([2, 7, 4, 1, 8, 1]))  # 1
+    print("Top 2 frequent :", top_k_frequent([1, 1, 1, 2, 2, 3], 2))  # [2, 1]
+    # assert k_closest([[1, 3], [-2, 2]], 1) == [[-2, 2]]
+```
 
 ---
 
-## 3. Pièges à Éviter
+## 3. Trucs et Astuces Python
+- **`heapq.heapify(liste)` est en $O(n)$ :** Toujours préférer `heapify` sur une liste existante plutôt que d'insérer $n$ éléments un par un avec `heappush` (qui coûte $O(n \log n)$).
+- **Tuples dans un tas `(priorite, donnee)` :** Python compare élément par élément de gauche à droite. Mets toujours la clé de tri en premier dans le tuple.
+- **`heapq.heappushpop(heap, item)` :** Plus rapide que d'appeler `heappush` puis `heappop` séparément.
 
-1. **Oublier le signe moins `-` au retour d'un Max-Heap :** C'est l'erreur la plus classique. Si tu insères `-val`, n'oublie pas de faire `-heapq.heappop(tas)` ET `-tas[0]` lors de la lecture.
-2. **Collision sur le 2e élément d'un tuple :** Si deux éléments ont la même priorité `(priorite, objet_non_comparable)` (par exemple un noeud d'arbre ou un dictionnaire), Python tentera de comparer `objet_non_comparable` et lèvera une `TypeError`. Ajoute un index unique en 2e position : `(priorite, index, objet)`.
-3. **Confondre Min-Heap et Max-Heap pour Top K :**
-   * Pour les **K plus grands** -> utilise un **Min-Heap** (on élimine les plus petits).
-   * Pour les **K plus petits** -> utilise un **Max-Heap** (on élimine les plus grands).
+---
+
+## 4. Pièges à éviter
+- **Oublier que `heapq` est UNIQUEMENT un Min-Heap :** Il n'existe pas de `max_heap` natif dans la bibliothèque standard. Utilise `-val` à l'entrée et `-heapq.heappop()` à la sortie.
+- **Trier le tableau `heap` à la main :** `heap[0]` est garanti d'être le minimum, mais `heap[1]` n'est pas forcément le 2e minimum (c'est un arbre binaire aplati, pas une liste triée).
+- **Collision de tuples non comparables :** Si deux éléments ont la même priorité `(freq, objet)` et que `objet` ne supporte pas `<`, Python lève un `TypeError`. Ajoute un index de départage : `(freq, index, objet)`.
