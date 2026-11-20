@@ -42,3 +42,14 @@ Fais ces exercices dans l'ordre pour passer de la fenêtre fixe à la fenêtre v
 3. **3. Longest Substring Without Repeating Characters** *(Moyen)* — Le problème LeetCode le plus célèbre sur le Sliding Window variable combiné à un `set` ou `dict`.
 4. **1004. Max Consecutive Ones III** *(Moyen)* — Apprend à gérer un budget d'erreurs (`k` zéros autorisés) dans une fenêtre dynamique.
 5. **209. Minimum Size Subarray Sum** *(Moyen)* — Le classique pour apprendre à rétrécir la fenêtre avec une boucle `while` afin de trouver une longueur minimale.
+
+---
+
+## 4. Compléments (fiche Intervals / Top K / Sliding Window)
+
+### Fenêtre fixe
+* [ ] **2269. Find the K-Beauty of a Number** *(Easy)* — Sous-segments de longueur `k` d'un entier qui divisent le nombre (attention division par zéro). [LeetCode](https://leetcode.com/problems/find-the-k-beauty-of-a-number/)
+* [ ] **1984. Minimum Difference Between Highest and Lowest of K Scores** *(Easy)* — Trier puis glisser une fenêtre de taille `k` pour minimiser `max - min`. [LeetCode](https://leetcode.com/problems/minimum-difference-between-highest-and-lowest-of-k-scores/)
+
+### Fenêtre variable
+* [ ] **424. Longest Repeating Character Replacement** *(Medium)* — Fenêtre valide tant que `taille - freq_max <= k` remplacements. [LeetCode](https://leetcode.com/problems/longest-repeating-character-replacement/)

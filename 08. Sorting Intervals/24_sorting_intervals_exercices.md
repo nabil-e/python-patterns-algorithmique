@@ -23,3 +23,11 @@
 * [ ] **435. Non-overlapping Intervals** — Trier par heure de fin croissante et compter le minimum d'intervalles à supprimer pour éviter tout conflit (très proche du **452**).
 * [ ] **1288. Remove Covered Intervals** — Trier par début croissant puis par fin décroissante (`key=lambda x: (x[0], -x[1])`) pour compter les intervalles totalement englobés.
 * [ ] **253. Meeting Rooms II** *(ou gestion de capacité)* — Utiliser un **Min-Heap** pour suivre l'heure de fin la plus proche parmi les salles occupées. *(Pattern secondaire : Heap).*
+
+---
+
+## 3. Compléments (fiche Intervals / Top K / Sliding Window)
+
+* [ ] **2446. Determine if Two Events Have Conflict** *(Easy)* — Deux plages `"HH:MM"` se chevauchent-elles ? Comparaison directe des bornes (lexicographique possible sur 24h). [LeetCode](https://leetcode.com/problems/determine-if-two-events-have-conflict/)
+* [ ] **729. My Calendar I** *(Medium)* — Structure de réservation qui refuse tout `[start, end)` en collision. Clarifier la condition d'intersection des intervalles semi-ouverts. [LeetCode](https://leetcode.com/problems/my-calendar-i/)
+* [ ] **2778. Sum of Squares of Special Elements** *(Easy — plutôt maths/indices)* — Somme des carrés des `nums[i-1]` où `n % i == 0` (indexation 1-based). Inclus depuis la fiche, hors mécanique d'intervalles pure. [LeetCode](https://leetcode.com/problems/sum-of-squares-of-special-elements/)
