@@ -9,7 +9,7 @@ Bienvenue dans mon dépôt d'apprentissage et de révision des **patterns algori
 - **Maîtriser les mécaniques fondamentales** derrière les problèmes d'entretiens techniques.
 - **Identifier le bon algorithme face à un énoncé brut** grâce à un arbre de décision et un paquet dédié de mini-énoncés sans indice de thème.
 - **Réviser en un coup d'œil** grâce aux fiches synthétiques (Cheat Sheets) disponibles en `.md` et `.pdf`.
-- **S'entraîner avec des squelettes purs** et des templates Python idiomatiques (`collections`, `heapq`, `bisect`, `itertools`) sans dépendance externe.
+- **S'entraîner avec des squelettes purs** et des templates Python idiomatiques (`collections`, `heapq`, `bisect`, `itertools`, `functools`) sans dépendance externe.
 - **Expérimenter en local** grâce au fichier `main.py` présent dans chaque dossier.
 - **Mémoriser durablement** via les 177 flashcards (Markdown, Anki et quiz interactif en ligne de commande).
 - **Suivre sa progression** via un parcours guidé sur 4 semaines et un carnet de bord centralisé avec cases à cocher et prise de notes personnelles.
@@ -46,6 +46,9 @@ Fiches mémo ultra-synthétiques pour réviser rapidement ou imprimer, incluant 
 | **9. Heap (Tas Binaire)** | [09_Heap.md](./sheet%20cheat/09_Heap.md) | [09_Heap.pdf](./sheet%20cheat/09_Heap.pdf) |
 | **10. Linked Lists** | [10_Linked_Lists.md](./sheet%20cheat/10_Linked_Lists.md) | [10_Linked_Lists.pdf](./sheet%20cheat/10_Linked_Lists.pdf) |
 | **11. Trees** | [11_Trees.md](./sheet%20cheat/11_Trees.md) | [11_Trees.pdf](./sheet%20cheat/11_Trees.pdf) |
+| **12. Backtracking** | [12_Backtracking.md](./sheet%20cheat/12_Backtracking.md) | [12_Backtracking.pdf](./sheet%20cheat/12_Backtracking.pdf) |
+| **13. Graphs** | [13_Graphs.md](./sheet%20cheat/13_Graphs.md) | [13_Graphs.pdf](./sheet%20cheat/13_Graphs.pdf) |
+| **14. Dynamic Programming** | [14_Dynamic_Programming.md](./sheet%20cheat/14_Dynamic_Programming.md) | [14_Dynamic_Programming.pdf](./sheet%20cheat/14_Dynamic_Programming.pdf) |
 
 ---
 
