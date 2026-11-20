@@ -1,55 +1,67 @@
-# Sliding Window — Plan d'Entraînement & Note Hors-Pattern
+# 🪟 Pattern 5 : Sliding Window — Plan d'Entraînement
 
-## 1. Tes Exercices Prioritaires
-
-### Niveau 1 : Fenêtre de Taille Fixe (Mécanique pure)
-* **643. Maximum Average Subarray I** *(Ta liste)*
-  * **Mécanique :** Applique directement le Template A (fenêtre fixe de taille `k`). Calcule la somme des `k` premiers éléments, glisse jusqu'à `len(nums)`, puis retourne `max_sum / k`.
-  * **Pattern secondaire :** Aucun.
-* **1876. Substrings of Size Three with Distinct Characters** *(Ta liste)*
-  * **Mécanique :** Fenêtre fixe de taille `3`. Pour chaque position `i` de `0` à `len(s) - 3`, vérifie si `len(set(s[i:i+3])) == 3` (ou compare simplement `s[i] != s[i+1] != s[i+2] != s[i]`).
-  * **Pattern secondaire :** Hashing (`set`) sur une micro-fenêtre.
-* **2379. Minimum Recolors to Get K Consecutive Black Blocks** *(Ta liste)*
-  * **Mécanique :** Fenêtre fixe de taille `k`. Compte le nombre de blocs blancs `'W'` dans la fenêtre initiale. Fais glisser la fenêtre : incrémente si `'W'` entre, décrémente si `'W'` sort, et garde le minimum de `'W'` observé.
-  * **Pattern secondaire :** Aucun.
-
-### Niveau 2 : Fenêtre Fixe + Hashing
-* **219. Contains Duplicate II** *(Ta liste — déjà vu dans Hashing)*
-  * **Mécanique :** Maintiens un `set` représentant une fenêtre glissante de taille maximale `k`. Si `nums[right]` est déjà dans le `set`, retourne `True`. Si `len(window) > k`, supprime `nums[right - k]`.
-  * **Pattern secondaire :** Hashing (`set`).
+Coche les cases `[x]` au fur et à mesure de ta progression. Les indices sont masqués pour te permettre de réfléchir sans spoiler.
 
 ---
 
-## 2. Note Spéciale sur l'Exercice 14 de ta liste
+## Série 1 : Fenêtre de Taille Fixe
 
-* **14. Longest Common Prefix** *(Ta liste)*
-  * **Diagnostic :** Cet exercice **n'appartient à aucun des 5 patterns** de ta liste (ni Hashing, ni Two Pointers, ni Stack, ni Binary Search, ni Sliding Window). Il relève de la **manipulation de chaînes / balayage vertical (String Scanning)**.
-  * **Comment le résoudre efficacement en Python :**
-    * **Approche idiomatique (Tri) :** Trie la liste `strs.sort()`. Le préfixe commun à tous les mots est forcément le préfixe commun entre le **premier** mot (`strs[0]`) et le **dernier** mot (`strs[-1]`) après tri alphabétique. Compare-les caractère par caractère en $O(n \log n)$.
-    * **Approche optimale (Balayage vertical) :** Parcours les caractères du premier mot `strs[0]` à l'index `i` et vérifie que tous les autres mots ont le même caractère à l'index `i` en $O(S)$ où $S$ est la somme des caractères.
+- [ ] **643. Maximum Average Subarray I** (Easy) — [LeetCode](https://leetcode.com/problems/maximum-average-subarray-i/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre glissante de taille fixe `k` : calcule la somme des `k` premiers éléments, puis fais glisser en ajoutant l'élément entrant et en retirant l'élément sortant.</details>
+  > Notes : 
+
+- [ ] **1876. Substrings of Size Three with Distinct Characters** (Easy) — [LeetCode](https://leetcode.com/problems/substrings-of-size-three-with-distinct-characters/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre fixe de taille `3` : vérifie à chaque pas si la taille du `set` de la sous-chaîne vaut `3` (ou compare les 3 caractères directement).</details>
+  > Notes : 
+
+- [ ] **2379. Minimum Recolors to Get K Consecutive Black Blocks** (Easy) — [LeetCode](https://leetcode.com/problems/minimum-recolors-to-get-k-consecutive-black-blocks/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre fixe de taille `k` : compte les blocs blancs `'W'` dans la fenêtre initiale et minimise ce compteur au fil du glissement.</details>
+  > Notes : 
+
+- [ ] **219. Contains Duplicate II** (Easy) — [LeetCode](https://leetcode.com/problems/contains-duplicate-ii/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre fixe de taille maximale `k` maintenue avec un `set` (Hashing) : supprime `nums[right - k]` dès que la fenêtre dépasse la taille `k`.</details>
+  > Notes : 
+
+- [ ] **2269. Find the K-Beauty of a Number** (Easy) — [LeetCode](https://leetcode.com/problems/find-the-k-beauty-of-a-number/)
+  <details><summary>💡 Indice d'approche</summary>Convertis l'entier en chaîne `str(num)` et fais glisser une fenêtre de taille `k` en vérifiant que le diviseur extrait n'est pas nul (`!= 0`).</details>
+  > Notes : 
+
+- [ ] **1984. Minimum Difference Between Highest and Lowest of K Scores** (Easy) — [LeetCode](https://leetcode.com/problems/minimum-difference-between-highest-and-lowest-of-k-scores/)
+  <details><summary>💡 Indice d'approche</summary>Trie d'abord le tableau pour rapprocher les scores voisins, puis fais glisser une fenêtre de taille `k` en calculant `nums[right] - nums[left]`.</details>
+  > Notes : 
 
 ---
 
-## 3. Entraînement Répétitif (Pour ancrer le pattern)
+## Série 2 : Entraînement Répétitif — Fenêtre Fixe & Variable
 
-Fais ces exercices dans l'ordre pour passer de la fenêtre fixe à la fenêtre variable :
+- [ ] **1343. Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold** (Medium) — [LeetCode](https://leetcode.com/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre fixe de taille `k` : compare la somme courante à `threshold * k` pour éviter les divisions flottantes.</details>
+  > Notes : 
 
-### Série A — Maîtriser la Fenêtre Fixe
-1. **1343. Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold** *(Moyen)* — Très proche de `643`, consolide le glissement de somme fixe.
-2. **1456. Maximum Number of Vowels in a Substring of Given Length** *(Moyen)* — Identique à `2379` dans sa logique de comptage entrant/sortant.
+- [ ] **1456. Maximum Number of Vowels in a Substring of Given Length** (Medium) — [LeetCode](https://leetcode.com/problems/maximum-number-of-vowels-in-a-substring-of-given-length/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre fixe de taille `k` : incrémente le compteur si le caractère entrant est dans `{"a", "e", "i", "o", "u"}` et décrémente si le caractère sortant en est une.</details>
+  > Notes : 
 
-### Série B — Maîtriser la Fenêtre Variable (Indispensable en entretien)
-3. **3. Longest Substring Without Repeating Characters** *(Moyen)* — Le problème LeetCode le plus célèbre sur le Sliding Window variable combiné à un `set` ou `dict`.
-4. **1004. Max Consecutive Ones III** *(Moyen)* — Apprend à gérer un budget d'erreurs (`k` zéros autorisés) dans une fenêtre dynamique.
-5. **209. Minimum Size Subarray Sum** *(Moyen)* — Le classique pour apprendre à rétrécir la fenêtre avec une boucle `while` afin de trouver une longueur minimale.
+- [ ] **3. Longest Substring Without Repeating Characters** (Medium) — [LeetCode](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre variable + Hashing (`set` ou `dict` des derniers index) : tant que `s[right]` est déjà dans la fenêtre, avance `left`.</details>
+  > Notes : 
+
+- [ ] **1004. Max Consecutive Ones III** (Medium) — [LeetCode](https://leetcode.com/problems/max-consecutive-ones-iii/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre variable : compte le nombre de `0` dans la fenêtre ; tant que ce compteur dépasse `k`, avance `left`.</details>
+  > Notes : 
+
+- [ ] **209. Minimum Size Subarray Sum** (Medium) — [LeetCode](https://leetcode.com/problems/minimum-size-subarray-sum/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre variable minimale : tant que `current_sum >= target`, mets à jour `min_len` et rétrécis par la gauche (`left += 1`).</details>
+  > Notes : 
+
+- [ ] **424. Longest Repeating Character Replacement** (Medium) — [LeetCode](https://leetcode.com/problems/longest-repeating-character-replacement/)
+  <details><summary>💡 Indice d'approche</summary>Fenêtre variable + `dict` de fréquences : la fenêtre reste valide tant que `(right - left + 1) - max_freq <= k`.</details>
+  > Notes : 
 
 ---
 
-## 4. Compléments (fiche Intervals / Top K / Sliding Window)
+## Note Hors-Pattern (Exercice de ta liste initiale)
 
-### Fenêtre fixe
-* [ ] **2269. Find the K-Beauty of a Number** *(Easy)* — Sous-segments de longueur `k` d'un entier qui divisent le nombre (attention division par zéro). [LeetCode](https://leetcode.com/problems/find-the-k-beauty-of-a-number/)
-* [ ] **1984. Minimum Difference Between Highest and Lowest of K Scores** *(Easy)* — Trier puis glisser une fenêtre de taille `k` pour minimiser `max - min`. [LeetCode](https://leetcode.com/problems/minimum-difference-between-highest-and-lowest-of-k-scores/)
-
-### Fenêtre variable
-* [ ] **424. Longest Repeating Character Replacement** *(Medium)* — Fenêtre valide tant que `taille - freq_max <= k` remplacements. [LeetCode](https://leetcode.com/problems/longest-repeating-character-replacement/)
+- [ ] **14. Longest Common Prefix** (Easy) — [LeetCode](https://leetcode.com/problems/longest-common-prefix/)
+  <details><summary>💡 Indice d'approche</summary>Hors Sliding Window (String Scanning) : compare caractère par caractère le premier et le dernier mot après un tri alphabétique (`strs.sort()`), ou effectue un balayage vertical sur `strs`.</details>
+  > Notes :

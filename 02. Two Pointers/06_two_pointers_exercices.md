@@ -1,43 +1,53 @@
-# Two Pointers — Plan d'Entraînement
+# 🏋️ Pattern 2 : Two Pointers — Plan d'Entraînement
 
-## 1. Tes exercices prioritaires (à faire en premier)
-
-Ces 4 exercices de ta liste utilisent directement les variantes de Two Pointers :
-
-1. **[LC 392. Is Subsequence](https://leetcode.com/problems/is-subsequence/)** — *Deux séquences (un pointeur par chaîne)*
-   - **Objectif :** Vérifier si `s` est une sous-séquence de `t`.
-   - **Approche :** Avance `j` sur `t` à chaque tour. Avance `i` sur `s` uniquement si `s[i] == t[j]`. Vérifie à la fin si `i == len(s)`.
-   - **Complexité :** Temps $O(|t|)$ | Espace $O(1)$.
-
-2. **[LC 283. Move Zeroes](https://leetcode.com/problems/move-zeroes/)** — *Lent / Rapide (écriture sur place)*
-   - **Objectif :** Déplacer tous les `0` à la fin tout en gardant l'ordre relatif des autres éléments, sans copier le tableau.
-   - **Approche :** `slow` pointe vers la prochaine case libre pour un non-zéro. Quand `nums[fast] != 0`, échange `nums[slow]` et `nums[fast]`, puis incrémente `slow`.
-   - **Complexité :** Temps $O(n)$ | Espace $O(1)$.
-
-3. **[LC 977. Squares of a Sorted Array](https://leetcode.com/problems/squares-of-a-sorted-array/)** — *Pointeurs convergents*
-   - **Objectif :** Renvoyer les carrés d'un tableau trié (contenant des négatifs) dans l'ordre croissant.
-   - **Approche :** Les plus grands carrés sont forcément aux extrémités (`left = 0`, `right = n - 1`). Compare `abs(nums[left])` et `abs(nums[right])`, et remplis le tableau résultat par la fin (`pos = n - 1`).
-   - **Complexité :** Temps $O(n)$ | Espace $O(n)$ pour la sortie.
-
-4. **[LC 88. Merge Sorted Array](https://leetcode.com/problems/merge-sorted-array/)** — *Deux séquences à rebours*
-   - **Objectif :** Fusionner `nums2` dans `nums1` (qui dispose de zéros tampon à la fin) sans espace supplémentaire.
-   - **Approche :** Pars de la fin des données valides (`p1 = m - 1`, `p2 = n - 1`) et écris à l'index `p = m + n - 1` en reculant. Si `p2 >= 0` à la fin, copie le reste de `nums2`.
-   - **Complexité :** Temps $O(m + n)$ | Espace $O(1)$.
-
-*(Note : **LC 844. Backspace String Compare** est traité dans le module **Stack**, mais peut aussi se résoudre en $O(1)$ d'espace avec Two Pointers en partant de la fin des chaînes).*
+Coche les cases `[x]` au fur et à mesure de ta progression. Essaie de résoudre chaque exercice sans ouvrir l'indice avant 15 minutes de réflexion.
 
 ---
 
-## 2. Entraînement répétitif (ancrage du pattern)
+## Série 1 : Pointeurs Lent/Rapide & Deux Séquences (Easy)
+*Objectif : Modifier un tableau en place en $O(1)$ espace et parcourir deux séquences en parallèle.*
 
-Enchaîne ces exercices pour automatiser chaque variante :
+- [ ] **344. Reverse String** (Easy) — [Lien LeetCode](https://leetcode.com/problems/reverse-string/)
+  <details><summary>💡 Indice d'approche</summary>Place <code>left = 0</code> et <code>right = len(s) - 1</code>, échange les éléments et rapproche les pointeurs jusqu'à ce qu'ils se croisent.</details>
+  > Notes : 
 
-### Série A — Pointeurs convergents (Extremités)
-- **[LC 125. Valid Palindrome](https://leetcode.com/problems/valid-palindrome/)** *(Facile)* : Ignorer les caractères non alphanumériques avec `.isalnum()` et comparer `left` et `right`.
-- **[LC 344. Reverse String](https://leetcode.com/problems/reverse-string/)** *(Facile)* : Échange simple `s[left], s[right] = s[right], s[left]` jusqu'au croisement.
-- **[LC 167. Two Sum II - Input Array Is Sorted](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/)** *(Moyen)* : Ajuster `left` ou `right` selon que la somme est trop petite ou trop grande.
-- **[LC 11. Container With Most Water](https://leetcode.com/problems/container-with-most-water/)** *(Moyen)* : Déplacer toujours le pointeur ayant la plus petite hauteur.
+- [ ] **283. Move Zeroes** (Easy) — [Lien LeetCode](https://leetcode.com/problems/move-zeroes/)
+  <details><summary>💡 Indice d'approche</summary>Pointeur <code>slow</code> pour la prochaine position non nulle, pointeur <code>fast</code> pour explorer et échanger dès que <code>nums[fast] != 0</code>.</details>
+  > Notes : 
 
-### Série B — Lent / Rapide (Modification sur place)
-- **[LC 26. Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)** *(Facile)* : Même logique que Move Zeroes, comparer `nums[fast] != nums[slow]`.
-- **[LC 27. Remove Element](https://leetcode.com/problems/remove-element/)** *(Facile)* : Écraser les valeurs égales à `val` à l'aide du pointeur d'écriture `slow`.
+- [ ] **26. Remove Duplicates from Sorted Array** (Easy) — [Lien LeetCode](https://leetcode.com/problems/remove-duplicates-from-sorted-array/)
+  <details><summary>💡 Indice d'approche</summary>Le tableau est trié : compare <code>nums[fast]</code> avec le dernier élément unique écrit à <code>nums[slow]</code>.</details>
+  > Notes : 
+
+- [ ] **392. Is Subsequence** (Easy) — [Lien LeetCode](https://leetcode.com/problems/is-subsequence/)
+  <details><summary>💡 Indice d'approche</summary>Avance le pointeur de <code>s</code> uniquement lorsqu'il correspond au caractère courant du pointeur de <code>t</code>.</details>
+  > Notes : 
+
+- [ ] **88. Merge Sorted Array** (Easy) — [Lien LeetCode](https://leetcode.com/problems/merge-sorted-array/)
+  <details><summary>💡 Indice d'approche</summary>Remplis <code>nums1</code> en partant de la <b>fin</b> (index <code>m + n - 1</code>) avec le plus grand des deux éléments pour ne pas écraser les valeurs non lues.</details>
+  > Notes : 
+
+---
+
+## Série 2 : Pointeurs Convergents & Optimisation (Easy / Medium)
+*Objectif : Réduire un espace de recherche de $O(n^2)$ à $O(n)$ sur des données triées ou géométriques.*
+
+- [ ] **977. Squares of a Sorted Array** (Easy) — [Lien LeetCode](https://leetcode.com/problems/squares-of-a-sorted-array/)
+  <details><summary>💡 Indice d'approche</summary>Les plus grands carrés se trouvent forcément aux deux extrémités (négatifs à gauche, positifs à droite). Remplis le tableau résultat de droite à gauche.</details>
+  > Notes : 
+
+- [ ] **125. Valid Palindrome** (Easy) — [Lien LeetCode](https://leetcode.com/problems/valid-palindrome/)
+  <details><summary>💡 Indice d'approche</summary>Pointeurs aux extrémités en ignorant les caractères non alphanumériques avec <code>.isalnum()</code> et en comparant en <code>.lower()</code>.</details>
+  > Notes : 
+
+- [ ] **167. Two Sum II - Input Array Is Sorted** (Medium) — [Lien LeetCode](https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/)
+  <details><summary>💡 Indice d'approche</summary>Si <code>nums[left] + nums[right] &gt; target</code>, réduis <code>right</code> ; si c'est inférieur, augmente <code>left</code>.</details>
+  > Notes : 
+
+- [ ] **11. Container With Most Water** (Medium) — [Lien LeetCode](https://leetcode.com/problems/container-with-most-water/)
+  <details><summary>💡 Indice d'approche</summary>Déplace toujours le pointeur situé sur la hauteur la plus petite : c'est le seul moyen d'espérer compenser la perte de largeur.</details>
+  > Notes : 
+
+- [ ] **15. 3Sum** (Medium) — [Lien LeetCode](https://leetcode.com/problems/3sum/)
+  <details><summary>💡 Indice d'approche</summary>Trie le tableau, fixe un premier élément <code>nums[i]</code> dans une boucle, puis applique Two Pointers convergent sur le reste du tableau en sautant les doublons.</details>
+  > Notes : 

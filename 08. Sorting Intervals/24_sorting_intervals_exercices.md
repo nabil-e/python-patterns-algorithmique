@@ -1,33 +1,47 @@
-# Sorting Intervals — Plan d'Entraînement
+# 📅 Pattern 8 : Sorting Intervals — Plan d'Entraînement
 
-## 1. Tes Exercices Prioritaires (à cocher)
-
-### Série 1 : Plages contiguës et durées cumulées
-* [ ] **228. Summary Ranges** — Parcourir le tableau trié en repérant les ruptures (`nums[i] + 1 != nums[i+1]`) pour formater chaque plage `"debut->fin"` ou `"debut"`. *(Pattern secondaire : Two Pointers).*
-* [ ] **495. Teemo Attacking** — Pour chaque attaque `timeSeries[i]`, ajouter `min(duration, timeSeries[i+1] - timeSeries[i])` afin de ne pas compter deux fois le temps d'empoisonnement qui se chevauche.
-
-### Série 2 : Insertion, Intersection et Glouton sur Intervalles
-* [ ] **57. Insert Interval** — Parcourir la liste triée en ajoutant d'abord les intervalles strictement avant `newInterval`, fusionner tous ceux qui le chevauchent avec `min` et `max`, puis ajouter les suivants.
-* [ ] **986. Interval List Intersections** — Utiliser deux pointeurs sur `firstList` et `secondList` pour extraire `[max(start1, start2), min(end1, end2)]` lorsque `start <= end`, puis avancer le pointeur ayant la plus petite fin. *(Pattern secondaire : Two Pointers).*
-* [ ] **452. Minimum Number of Arrows to Burst Balloons** — Trier les ballons par coordonnées de fin croissante (`x_end`) et tirer une flèche à la fin du premier ballon non éclaté. *(Pattern secondaire : Greedy).*
+Coche les cases `[x]` au fur et à mesure de ta progression. Les indices sont masqués pour te permettre de réfléchir sans spoiler.
 
 ---
 
-## 2. Entraînement Répétitif Complémentaire
+## Série 1 : Tes Exercices Prioritaires
 
-### Niveau 1 : Les grands classiques indispensables
-* [ ] **56. Merge Intervals** — Le problème de référence absolu pour maîtriser le tri par début et la fusion linéaire.
-* [ ] **252. Meeting Rooms** *(ou équivalent)* — Trier les réunions par début et vérifier si une réunion commence avant que la précédente ne se termine (`intervals[i][0] < intervals[i-1][1]`).
+- [ ] **228. Summary Ranges** (Easy) — [LeetCode](https://leetcode.com/problems/summary-ranges/)
+  <details><summary>💡 Indice d'approche</summary>Tableau déjà trié : maintiens un pointeur de début de plage et avance tant que `nums[i + 1] == nums[i] + 1`.</details>
+  > Notes : 
 
-### Niveau 2 : Niveau Entretien Confirmé
-* [ ] **435. Non-overlapping Intervals** — Trier par heure de fin croissante et compter le minimum d'intervalles à supprimer pour éviter tout conflit (très proche du **452**).
-* [ ] **1288. Remove Covered Intervals** — Trier par début croissant puis par fin décroissante (`key=lambda x: (x[0], -x[1])`) pour compter les intervalles totalement englobés.
-* [ ] **253. Meeting Rooms II** *(ou gestion de capacité)* — Utiliser un **Min-Heap** pour suivre l'heure de fin la plus proche parmi les salles occupées. *(Pattern secondaire : Heap).*
+- [ ] **495. Teemo Attacking** (Easy) — [LeetCode](https://leetcode.com/problems/teemo-attacking/)
+  <details><summary>💡 Indice d'approche</summary>Pour chaque attaque consécutive, ajoute `min(duration, timeSeries[i + 1] - timeSeries[i])`, puis ajoute `duration` pour la dernière attaque.</details>
+  > Notes : 
+
+- [ ] **2446. Determine if Two Events Have Conflict** (Easy) — [LeetCode](https://leetcode.com/problems/determine-if-two-events-have-conflict/)
+  <details><summary>💡 Indice d'approche</summary>Les heures `"HH:MM"` se comparent lexicographiquement : il y a conflit si `max(start1, start2) <= min(end1, end2)`.</details>
+  > Notes : 
+
+- [ ] **57. Insert Interval** (Medium) — [LeetCode](https://leetcode.com/problems/insert-interval/)
+  <details><summary>💡 Indice d'approche</summary>Trois phases linéaires : ajoute les intervalles strictement avant `newInterval`, fusionne ceux qui chevauchent (`min` des débuts, `max` des fins), puis ajoute le reste.</details>
+  > Notes : 
+
+- [ ] **986. Interval List Intersections** (Medium) — [LeetCode](https://leetcode.com/problems/interval-list-intersections/)
+  <details><summary>💡 Indice d'approche</summary>Two Pointers sur les deux listes : l'intersection existe si `max(start1, start2) <= min(end1, end2)`. Avance le pointeur dont l'intervalle finit le plus tôt.</details>
+  > Notes : 
+
+- [ ] **452. Minimum Number of Arrows to Burst Balloons** (Medium) — [LeetCode](https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/)
+  <details><summary>💡 Indice d'approche</summary>Trie par **borne de fin croissante** (`x[1]`) et tire une flèche à la fin du ballon courant tant que les suivants commencent avant ou sur cette coordonnée.</details>
+  > Notes : 
 
 ---
 
-## 3. Compléments (fiche Intervals / Top K / Sliding Window)
+## Série 2 : Entraînement Répétitif & Compléments
 
-* [ ] **2446. Determine if Two Events Have Conflict** *(Easy)* — Deux plages `"HH:MM"` se chevauchent-elles ? Comparaison directe des bornes (lexicographique possible sur 24h). [LeetCode](https://leetcode.com/problems/determine-if-two-events-have-conflict/)
-* [ ] **729. My Calendar I** *(Medium)* — Structure de réservation qui refuse tout `[start, end)` en collision. Clarifier la condition d'intersection des intervalles semi-ouverts. [LeetCode](https://leetcode.com/problems/my-calendar-i/)
-* [ ] **2778. Sum of Squares of Special Elements** *(Easy — plutôt maths/indices)* — Somme des carrés des `nums[i-1]` où `n % i == 0` (indexation 1-based). Inclus depuis la fiche, hors mécanique d'intervalles pure. [LeetCode](https://leetcode.com/problems/sum-of-squares-of-special-elements/)
+- [ ] **56. Merge Intervals** (Medium) — [LeetCode](https://leetcode.com/problems/merge-intervals/)
+  <details><summary>💡 Indice d'approche</summary>Trie par heure de début (`x[0]`), puis fusionne avec le dernier intervalle retenu si `start <= merged[-1][1]`.</details>
+  > Notes : 
+
+- [ ] **435. Non-overlapping Intervals** (Medium) — [LeetCode](https://leetcode.com/problems/non-overlapping-intervals/)
+  <details><summary>💡 Indice d'approche</summary>Trie par **heure de fin croissante** (choix glouton) et conserve toujours l'intervalle qui se termine le plus tôt pour minimiser les suppressions.</details>
+  > Notes : 
+
+- [ ] **729. My Calendar I** (Medium) — [LeetCode](https://leetcode.com/problems/my-calendar-i/)
+  <details><summary>💡 Indice d'approche</summary>Maintiens une liste triée des créneaux et utilise la recherche binaire (`bisect`) pour vérifier l'absence de chevauchement avec les voisins.</details>
+  > Notes :
