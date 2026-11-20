@@ -1,4 +1,4 @@
-# PATTERN 10 / 11 : Linked Lists (Listes Chaînées)
+# 10. Linked Lists (Listes Chaînées)
 > **Manipuler des séquences dynamiques par redirection de pointeurs sans mémoire supplémentaire**
 
 **Principe clé :** Contrairement aux tableaux (`list`), une liste chaînée ne stocke pas ses éléments de manière contiguë. L'accès par index est en $O(n)$, mais l'insertion ou la suppression d'un nœud (une fois positionné) se fait en $O(1)$. On utilise un nœud sentinelle (`dummy`), deux pointeurs à vitesses différentes (`slow`/`fast`) ou l'inversion sur place (`prev`/`curr`/`nxt`).  

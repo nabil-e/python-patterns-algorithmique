@@ -1,4 +1,4 @@
-# PATTERN 11 / 11 : Trees (Arbres Binaires & BST)
+# 11. Trees (Arbres Binaires & BST)
 > **Explorer une structure hiérarchique en profondeur (DFS) ou par niveau (BFS)**
 
 **Principe clé :** Un arbre binaire est une structure récursive composée de nœuds (`val`, `left`, `right`). Le **DFS** (récursif ou pile) explore chaque branche jusqu'aux feuilles avant de remonter ; le **BFS** (file `collections.deque`) visite l'arbre étage par étage. Dans un **BST** (Binary Search Tree), le parcours *In-order* (`Gauche -> Nœud -> Droite`) produit les valeurs triées.  
