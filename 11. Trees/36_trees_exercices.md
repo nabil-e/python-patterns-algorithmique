@@ -59,3 +59,19 @@ Coche les cases `[x]` au fur et à mesure de ta progression et note tes observat
 - [ ] **235. Lowest Common Ancestor of a Binary Search Tree** (Medium) — [Lien LeetCode](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
   - *Technique :* Exploiter l'ordre BST pour trouver le point de divergence entre `p` et `q`.
   > Notes : 
+
+---
+
+## Série 3 : Compléments BFS / DFS (fiche BFS, DFS & DP)
+
+- [ ] **111. Minimum Depth of Binary Tree** (Easy) — [Lien LeetCode](https://leetcode.com/problems/minimum-depth-of-binary-tree/)
+  - *Technique :* BFS — dès qu'une feuille apparaît, retourner la profondeur courante (plus court chemin).
+  > Notes : 
+
+- [ ] **637. Average of Levels in Binary Tree** (Easy) — [Lien LeetCode](https://leetcode.com/problems/average-of-levels-in-binary-tree/)
+  - *Technique :* BFS — figer `len(queue)` pour isoler chaque niveau et calculer sa moyenne.
+  > Notes : 
+
+- [ ] **572. Subtree of Another Tree** (Easy) — [Lien LeetCode](https://leetcode.com/problems/subtree-of-another-tree/)
+  - *Technique :* Double DFS — parcours de l'arbre principal + test d'identité structurelle de deux sous-arbres.
+  > Notes : 

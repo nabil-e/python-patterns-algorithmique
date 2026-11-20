@@ -38,3 +38,12 @@
 * [ ] **1337. The K Weakest Rows in a Matrix** *(Easy — Tuple `(force, index)` dans un Heap)*
 * [ ] **692. Top K Frequent Words** *(Medium — Mixte Hashing + Heap avec ordre lexicographique)*
 * [ ] **378. Kth Smallest Element in a Sorted Matrix** *(Medium — Min-Heap multi-listes)*
+
+---
+
+## 3. Compléments Top K (fiche Intervals / Top K / Sliding Window)
+
+* [ ] **2099. Find Subsequence of Length K With the Largest Sum** *(Easy)* — Garder les K plus grandes valeurs **en préservant l'ordre d'apparition** (conserver l'indice avant sélection). [LeetCode](https://leetcode.com/problems/find-subsequence-of-length-k-with-the-largest-sum/)
+* [ ] **2335. Minimum Amount of Time to Fill Cups** *(Easy)* — Max-Heap : à chaque seconde, piocher les 2 catégories au plus grand besoin restant. [LeetCode](https://leetcode.com/problems/minimum-amount-of-time-to-fill-cups/)
+* [ ] **451. Sort Characters By Frequency** *(Medium)* — `Counter` + Heap / tri par fréquence pour reconstruire la chaîne. *(Secondaire : Hashing)*. [LeetCode](https://leetcode.com/problems/sort-characters-by-frequency/)
+* [ ] **373. Find K Pairs with Smallest Sums** *(Medium)* — Min-Heap pour explorer les plus petites sommes de paires sans tout générer. [LeetCode](https://leetcode.com/problems/find-k-pairs-with-smallest-sums/)
