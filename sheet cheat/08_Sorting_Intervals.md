@@ -1,62 +1,49 @@
-# 08. Sorting Intervals (Tri et Fusion d'Intervalles)
-
-## 💡 Idée Centrale
-Face à des plages horaires, des segments ou des intervalles `[début, fin]`, **trier les intervalles par heure de début** permet d'aligner chronologiquement tous les chevauchements potentiels. Il suffit ensuite d'une seule passe linéaire pour comparer chaque intervalle avec le précédent.
-
-* **Complexité Temporelle :** $O(n \log n)$ (dominée par le tri initial)
-* **Complexité Spatiale :** $O(n)$ (pour stocker la liste fusionnée) ou $O(1)$
+# 08. Sorting Intervals (Tri d'Intervalles)
+> **Pattern 08 / 14** • **Temps :** `O(n log n)` • **Espace :** `O(n)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
-| Ce que dit l'énoncé | Mots-clés anglais fréquents |
-| :--- | :--- |
-| L'entrée est une liste de paires `[start, end]` représentant des plages ou segments. | *intervals*, *start and end times*, *ranges*, *meetings* |
-| Fusionner les intervalles qui se superposent ou en insérer un nouveau. | *merge overlapping intervals*, *insert interval*, *non-overlapping* |
-| Compter le nombre minimum de salles de réunion ou de ressources simultanées. | *meeting rooms*, *minimum platforms*, *concurrent events* |
-| Trouver les créneaux libres entre plusieurs emplois du temps. | *employee free time*, *find gaps*, *covered intervals* |
+## 1. Idée Centrale
+Face à des intervalles `[start, end]` désordonnés, le premier réflexe est de **trier par heure de début** (`key=lambda x: x[0]`). Une fois triés, deux intervalles consécutifs `A` et `B` se chevauchent si et seulement si `B[0] <= A[1]`.
 
 ---
 
-## 🧩 Variantes Principales
+## 2. Indices dans l'énoncé
 
-### 1. Fusion d'intervalles (Merge Intervals)
-* **Tri :** Par heure de début `x[0]`.
-* **Condition de chevauchement :** `current[0] <= last_merged[1]`.
-* **Action :** On étend la fin : `last_merged[1] = max(last_merged[1], current[1])`.
-
-### 2. Supprimer le minimum d'intervalles pour éviter les conflits
-* **Tri :** Par **heure de fin** `x[1]` ! (Plus une réunion finit tôt, plus elle laisse de place aux suivantes).
-* **Condition de conflit :** `current[0] < prev_end`.
-
-### 3. Compter les chevauchements simultanés (Sweep Line / Meeting Rooms II)
-Séparer tous les `start` dans un tableau trié et tous les `end` dans un autre tableau trié, puis avancer avec deux pointeurs (`+1` à chaque début, `-1` à chaque fin).
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
+| :--- | :--- | :--- |
+| Fusionner tous les créneaux qui se superposent | `merge intervals`, `overlapping intervals`, `combine ranges` | Tri par `start` + extension de `end = max(end, curr[1])` |
+| Insérer un nouvel intervalle dans une liste déjà triée et fusionner | `insert interval`, `non-overlapping sorted intervals` | 3 phases : avant, chevauchement (min/max), après |
+| Retirer le minimum d'intervalles pour supprimer tout chevauchement | `non-overlapping intervals`, `minimum removals`, `erase overlap` | Tri par `end` croissant (approche gloutonne) |
+| Compter le nombre minimum de salles de réunion simultanées | `meeting rooms`, `minimum platforms`, `concurrent events` | Tri par `start` + Min-Heap des heures de fin |
 
 ---
 
-## ⚠️ Pièges à éviter
-* **Oublier le `max()` lors de la fusion :** Un intervalle `[1, 10]` suivi de `[2, 5]` doit devenir `[1, 10]` et non `[1, 5]`. Prenez toujours `max(last[1], curr[1])`.
-* **Cas limites de contact (`[1, 4]` et `[4, 5]`) :** Vérifiez dans l'énoncé si deux intervalles qui se touchent à la limite comptent comme un chevauchement (`<=`) ou non (`<`).
+## 3. Variantes & Pièges Courants
+
+### Variantes principales
+* **Fusion standard (Tri par début) :** Trier par `start`, comparer `curr[0] <= merged[-1][1]` et mettre à jour la fin avec `max(merged[-1][1], curr[1])`.
+* **Sélection maximale / Suppressions minimales (Tri par fin) :** Trier par `end` croissant pour libérer la ressource le plus tôt possible et garder un maximum d'intervalles.
+* **Chevauchement simultané maximal (Sweep Line / Heap) :** Séparer les débuts et fins (ou utiliser un Min-Heap sur `end`) pour compter les conflits actifs.
+
+### Pièges à éviter
+* **Écraser `end` sans `max()` :** Si l'intervalle `[1, 10]` est suivi de `[2, 5]`, la fin fusionnée est `max(10, 5) = 10`, et non `5`.
+* **Inégalités strictes vs larges (`<` vs `<=`) :** Vérifiez dans l'énoncé si deux créneaux qui se touchent (ex. `[1, 4]` et `[4, 5]`) sont considérés comme un chevauchement ou non.
+* **Trier par `start` pour supprimer des conflits :** Pour maximiser les intervalles compatibles (ou minimiser les suppressions), il faut trier par **heure de fin** (`x[1]`), pas par heure de début.
 
 ---
 
-## 💻 Squelettes de Code (Python)
+## 4. Squelettes de Code (Python)
 
-### Variante A : Fusion d'intervalles (Tri par début)
+### Variante 1 : Merge Intervals (Tri par début + Fusion)
 ```python
 def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:
-    if not intervals:
-        return []
-
-    # 1. Trier par heure de début
     intervals.sort(key=lambda x: x[0])
     merged = [intervals[0]]
 
     for start, end in intervals[1:]:
         last_end = merged[-1][1]
-
-        # 2. Chevauchement : on fusionne en gardant la fin la plus tardive
-        if start <= last_end:
+        if start <= last_end:     # Chevauchement détecté
             merged[-1][1] = max(last_end, end)
         else:
             merged.append([start, end])
@@ -64,20 +51,17 @@ def merge_intervals(intervals: list[list[int]]) -> list[list[int]]:
     return merged
 ```
 
-### Variante B : Minimiser les suppressions (Tri par fin)
+### Variante 2 : Non-overlapping Intervals (Tri par fin pour min suppressions)
 ```python
 def erase_overlap_intervals(intervals: list[list[int]]) -> int:
-    # Trier par heure de FIN pour maximiser le nombre de réunions gardées
-    intervals.sort(key=lambda x: x[1])
+    intervals.sort(key=lambda x: x[1])  # Garder ceux qui finissent le plus tôt
+    removals = 0
     prev_end = intervals[0][1]
-    removed = 0
 
     for start, end in intervals[1:]:
-        if start < prev_end:
-            # Conflit : on supprime l'intervalle actuel (qui finit plus tard)
-            removed += 1
+        if start < prev_end:      # Conflit : on supprime l'intervalle courant
+            removals += 1
         else:
-            prev_end = end
-
-    return removed
+            prev_end = end        # Pas de conflit : on met à jour la fin
+    return removals
 ```

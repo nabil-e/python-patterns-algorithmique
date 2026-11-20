@@ -1,53 +1,60 @@
-# 01. Hashing (Tables de hachage & Ensembles)
+# 01. HASHING (DICT / SET / COUNTER)
+*Échanger de l'espace O(n) contre une recherche instantanée O(1)*
 
-## 💡 Idée Centrale
-Utiliser une table de hachage (`dict` en Python) ou un ensemble (`set`) pour stocker des éléments déjà vus afin de vérifier leur existence ou leur fréquence en temps constant **$O(1)$**, échangeant un peu de mémoire contre un gain de vitesse massif.
-
-* **Complexité temporelle :** $O(n)$ en moyenne (au lieu de $O(n^2)$ avec des boucles imbriquées).
-* **Complexité spatiale :** $O(n)$ pour stocker les clés/valeurs.
+- **Complexité :** `Temps: O(n) | Espace: O(n)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
+## 1. IDÉE CENTRALE
+Mémoriser les éléments déjà vus, leurs index ou leurs fréquences dans une table de hachage (`dict`, `set`, `Counter`) afin d'éliminer les boucles imbriquées O(n²) lors de la recherche de compléments ou de doublons.
 
-| Ce que demande l'énoncé | Mots-clés en anglais | Structure à choisir |
+---
+
+## 2. INDICES DANS L'ÉNONCÉ
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
 | :--- | :--- | :--- |
-| Vérifier si un élément existe déjà ou éliminer les doublons. | *contains duplicate*, *unique elements*, *first repeating* | `set()` |
-| Trouver deux éléments qui forment une somme ou une différence cible. | *two sum*, *pair with given sum*, *complement* | `dict` (`valeur: index`) |
-| Compter le nombre d'occurrences ou comparer deux chaînes/tableaux. | *frequency*, *anagram*, *majority element*, *count* | `dict` ou `collections.Counter` |
-| Regrouper des éléments partageant une caractéristique commune. | *group anagrams*, *categorize*, *isomorphic* | `collections.defaultdict(list)` |
+| Vérifier la présence de doublons ou éléments uniques | `duplicates, distinct, unique, contains` | **set** |
+| Trouver une paire dont la somme vaut une cible | `two sum, pair sum, complement, target` | **dict {val: index}** |
+| Compter les occurrences ou vérifier des anagrammes | `frequency, anagram, majority, count` | **Counter / defaultdict(int)** |
+| Regrouper des éléments selon une signature commune | `group anagrams, isomorphic, pattern` | **defaultdict(list)** |
 
 ---
 
-## 🛠️ Variantes Principales
+## 3. VARIANTES & PIÈGES COURANTS
+### Variantes principales
+- **Set de présence :** Détection de doublons ou vérification d'appartenance en O(1) moyen.
+- **Map Valeur → Index :** Retrouver la position exacte d'un complément (*Two Sum*).
+- **Compteur de fréquences :** `collections.Counter` pour comparer deux distributions.
 
-1. **Le Set de présence (`seen = set()`) :** Idéal pour détecter un doublon ou un cycle en un seul passage.
-2. **La Hash Map de recherche (`seen = {val: idx}`) :** On cherche le complément (`target - num`) dans le dictionnaire avant d'y insérer l'élément actuel.
-3. **La Map de fréquences (`Counter`) :** On compte les occurrences de chaque caractère/nombre pour comparer deux collections.
+### Pièges à éviter
+- **Clé mutable :** Une `list` ne peut pas être clé de dictionnaire ; convertir en `tuple(list)`.
+- **Ordre non garanti sur d'anciennes versions :** Ne pas supposer un tri automatique ; utiliser `sorted()` si nécessaire.
+- **Collision / pire cas :** O(1) en moyenne, mais O(n) théorique en cas de collisions massives.
 
 ---
 
-## 💻 Squelette de Code (Python)
+## 4. SQUELETTES PYTHON (TYPÉS)
 
+### Variante A : Recherche de complément (Valeur → Index)
 ```python
-from collections import Counter, defaultdict
-
-# Variante 1 : Recherche de complément (type Two Sum)
-def hash_lookup(nums, target):
-    seen = {}  # Stocke {valeur: index}
+def two_sum(nums: list[int], target: int) -> list[int]:
+    seen: dict[int, int] = {}  # {valeur: index}
     for i, num in enumerate(nums):
         complement = target - num
         if complement in seen:
             return [seen[complement], i]
         seen[num] = i
     return []
+```
 
-# Variante 2 : Comptage de fréquences & Regroupement
-def hash_grouping(items):
-    groups = defaultdict(list)
-    for item in items:
-        # Créer une clé immuable (ex: tuple trié pour les anagrammes)
-        key = tuple(sorted(item))
-        groups[key].append(item)
+### Variante B : Regroupement par signature (defaultdict)
+```python
+from collections import defaultdict
+
+def group_anagrams(strs: list[str]) -> list[list[str]]:
+    groups: dict[tuple[str, ...], list[str]] = defaultdict(list)
+    for word in strs:
+        signature = tuple(sorted(word))  # Clé immuable hachable
+        groups[signature].append(word)
     return list(groups.values())
 ```

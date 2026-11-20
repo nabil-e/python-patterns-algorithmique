@@ -1,73 +1,69 @@
 # 07. Greedy (Algorithmes Gloutons)
-
-## 💡 Idée Centrale
-Faire à chaque étape le choix qui semble **localement optimal** sur le moment, dans l'espoir qu'il mène à l'**optimum global**, sans jamais revenir en arrière (contrairement au Backtracking ou à la Programmation Dynamique).
-
-* **Complexité Temporelle :** Souvent $O(n)$ ou $O(n \log n)$ (si un tri préalable est nécessaire)
-* **Complexité Spatiale :** $O(1)$ (la grande force du Greedy)
+> **Pattern 07 / 14** • **Temps :** `O(n)` ou `O(n log n)` • **Espace :** `O(1)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
-| Ce que dit l'énoncé | Mots-clés anglais fréquents |
-| :--- | :--- |
-| Trouver le minimum ou maximum d'étapes, de sauts, ou de ressources pour atteindre un objectif. | *minimum jumps*, *can reach the end*, *assign cookies*, *gas station* |
-| Construire la chaîne la plus grande/petite possible selon l'ordre alphabétique. | *lexicographically smallest*, *largest number*, *remove k digits* |
-| Maximiser un profit en achetant/vendant à volonté ou en choisissant les meilleures options. | *maximum profit*, *best time to buy and sell*, *activity selection* |
-| Le problème ressemble à de la DP, mais les choix passés n'influencent pas les contraintes futures. | *greedy choice*, *optimal substructure*, *without looking back* |
+## 1. Idée Centrale
+Construire la solution étape par étape en choisissant systématiquement l'option qui semble la plus avantageuse **sur le moment**, sans jamais revenir en arrière. Cette approche s'applique uniquement lorsque le choix local optimal ne compromet pas les choix futurs.
 
 ---
 
-## 🧩 Variantes Principales
+## 2. Indices dans l'énoncé
 
-### 1. Suivi de portée / Frontière (Jump Game)
-Maintenir une variable `max_reach` (l'indice maximal atteignable). À chaque pas `i`, si `i > max_reach`, on est bloqué. Sinon, on met à jour `max_reach = max(max_reach, i + nums[i])`.
-
-### 2. Tri préalable + Sélection gloutonne
-Trier les éléments (ex: enfants par gourmandise et biscuits par taille) puis associer le plus petit biscuit suffisant au plus petit enfant.
-
-### 3. Accumulation locale (Kadane / Gas Station)
-Accumuler un gain ou un solde tant qu'il reste positif. Dès qu'il devient négatif, le réinitialiser à zéro et repartir de l'indice suivant.
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
+| :--- | :--- | :--- |
+| Atteindre la fin d'un tableau ou minimiser le nombre de sauts | `jump game`, `minimum jumps`, `can reach end` | Suivi de la portée maximale (`max_reach`) |
+| Maximiser des profits, des attributions ou satisfaire un max d'éléments | `assign cookies`, `max profit`, `maximize tasks` | Tri préalable + double pointeur glouton |
+| Vérifier un trajet circulaire avec gains et coûts à chaque étape | `gas station`, `circular route`, `starting index` | Reset du point de départ dès que le cumul devient négatif |
+| Construire le plus petit/grand nombre ou chaîne lexicographique | `smallest subsequence`, `remove k digits`, `lexicographical` | Pile monotone gloutonne (supprimer les plus grands à gauche) |
 
 ---
 
-## ⚠️ Pièges à éviter
-* **Confondre Greedy et Programmation Dynamique (DP) :** Exemple classique du rendu de monnaie (*Coin Change*). Avec des pièces `[1, 3, 4]` pour faire `6`, le Greedy prend `4 + 1 + 1` (3 pièces), alors que l'optimal est `3 + 3` (2 pièces). Testez toujours un contre-exemple avant de valider une approche Greedy.
+## 3. Variantes & Pièges Courants
+
+### Variantes principales
+* **Portée maximale (Reachability) :** Maintenir la frontière la plus lointaine atteignable (`max_reach = max(max_reach, i + nums[i])`) en un seul passage `O(n)`.
+* **Tri + Appariement :** Trier les ressources et les demandes par ordre croissant pour associer la plus petite ressource suffisante à la plus petite demande.
+* **Cumul avec réinitialisation :** Vérifier d'abord que la somme globale est valide (`sum(gain) >= sum(cost)`), puis réinitialiser l'index de départ dès que le réservoir local passe sous 0.
+
+### Pièges à éviter
+* **Confondre Greedy et Programmation Dynamique (DP) :** Si un choix local apparemment optimal bloque une meilleure combinaison globale (ex. rendre la monnaie avec des pièces `[1, 3, 4]` pour faire `6`), le Greedy échoue : utilisez la DP.
+* **Oublier de tester un contre-exemple :** Avant de coder un algorithme glouton, testez toujours 2 ou 3 petits cas limites à la main pour vérifier que le choix local reste toujours sûr.
+* **Oublier le tri initial :** Beaucoup de problèmes gloutons nécessitent d'ordonner les données en `O(n log n)` avant d'appliquer la règle de décision locale.
 
 ---
 
-## 💻 Squelettes de Code (Python)
+## 4. Squelettes de Code (Python)
 
-### Variante A : Frontière maximale (Jump Game)
+### Variante 1 : Jump Game II (Nombre minimum de sauts en O(n))
 ```python
-def can_jump(nums: list[int]) -> bool:
-    max_reach = 0
+def min_jumps(nums: list[int]) -> int:
+    jumps = 0
+    current_end = 0   # Fin de la plage couverte par le saut actuel
+    farthest = 0      # Point le plus loin atteignable depuis cette plage
 
-    for i, jump in enumerate(nums):
-        # Si l'indice actuel dépasse la portée maximale atteignable
-        if i > max_reach:
-            return False
-        # Mettre à jour la nouvelle portée maximale
-        max_reach = max(max_reach, i + jump)
-        
-        if max_reach >= len(nums) - 1:
-            return True
-
-    return True
+    for i in range(len(nums) - 1):
+        farthest = max(farthest, i + nums[i])
+        if i == current_end:      # On doit déclencher un nouveau saut
+            jumps += 1
+            current_end = farthest
+            if current_end >= len(nums) - 1:
+                break
+    return jumps
 ```
 
-### Variante B : Réinitialisation sur solde négatif (Algorithme de Kadane)
+### Variante 2 : Gas Station (Point de départ d'un circuit en O(n))
 ```python
-def max_subarray(nums: list[int]) -> int:
-    max_sum = nums[0]
-    curr_sum = 0
+def can_complete_circuit(gas: list[int], cost: list[int]) -> int:
+    if sum(gas) < sum(cost):
+        return -1                 # Impossible globalement
 
-    for num in nums:
-        # Si la somme accumulée devient un fardeau (< 0), on repart à zéro
-        if curr_sum < 0:
-            curr_sum = 0
-        curr_sum += num
-        max_sum = max(max_sum, curr_sum)
-
-    return max_sum
+    tank = 0
+    start_index = 0
+    for i in range(len(gas)):
+        tank += gas[i] - cost[i]
+        if tank < 0:              # Départ invalide : on repart de la station suivante
+            start_index = i + 1
+            tank = 0
+    return start_index
 ```

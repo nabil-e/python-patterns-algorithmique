@@ -1,54 +1,76 @@
 # 04. Binary Search (Recherche Binaire)
 
-## 💡 Idée Centrale
-Diviser par deux l'espace de recherche à chaque étape en éliminant la moitié qui ne peut pas contenir la solution. Applicable dès qu'il existe une propriété **monotone** (une frontière nette entre `Faux` et `Vrai`).
-
-* **Complexité temporelle :** $O(\log n)$ (ou $O(n \log(	ext{Max}))$ pour une recherche sur la réponse).
-* **Complexité spatiale :** $O(1)$.
+> **Complexité visée :** Temps $O(\log n)$ (ou $O(n \log M)$ sur espace de réponse) | Espace $O(1)$
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
+## 1. Idée Centrale
+Éliminer la moitié de l'espace de recherche à chaque étape en exploitant une **propriété monotone** (tableau trié ou fonction de faisabilité qui passe de `False` à `True`). Dès que la complexité exigée est $O(\log n)$ ou que $N \ge 10^9$, la recherche binaire est incontournable.
 
-| Ce que demande l'énoncé | Mots-clés en anglais | Variante à choisir |
+---
+
+## 2. Indices dans l'énoncé & Mots-clés (LeetCode)
+
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche / Variante |
 | :--- | :--- | :--- |
-| Chercher une cible ou sa position d'insertion dans un tableau **trié**. | *sorted array*, *search in O(log n)*, *first/last position* | **Classique** ou **Bornes** |
-| Chercher dans un tableau trié ayant subi une rotation ou ayant un pic. | *rotated sorted array*, *peak element*, *minimum in rotated* | **Recherche modifiée** |
-| Trouver la capacité minimale ou la vitesse maximale permettant d'accomplir une tâche. | *minimum capacity*, *koko eating bananas*, *split array largest sum*, *minimize the maximum* | **Binary Search on Answer** |
+| Chercher une cible exacte ou sa position d'insertion dans un tableau trié | `sorted array`, `O(log n)`, `search insert` | **Classic Binary Search** |
+| Trouver la première ou dernière occurrence (bornes gauche/droite) | `first/last position`, `lower/upper bound` | **Leftmost / Rightmost Bound** |
+| Tableau trié ayant subi une rotation ou recherche d'un pic | `rotated sorted array`, `peak element`, `minimum` | **Modified Binary Search** |
+| Minimiser le maximum ou maximiser le minimum d'une capacité/vitesse | `min max capacity`, `koko eating`, `split array` | **Binary Search on Answer** |
 
 ---
 
-## 🛠️ Variantes & Pièges à éviter
+## 3. Variantes & Pièges Courants
 
-1. **Classique (`while left <= right`) :** Cherche une valeur exacte. Retourne `mid` dès qu'on la trouve.
-2. **Recherche de borne (`left < right`) :** Cherche la *première* ou *dernière* occurrence d'une condition. Ne fait pas de `return` dans la boucle, mais resserre `right = mid` ou `left = mid + 1`.
-3. **Binary Search on Answer :** On ne cherche pas dans un tableau, mais dans un intervalle de réponses possibles `[min_ans, max_ans]` à l'aide d'une fonction `is_valid(mid)`.
+### Variantes Clés
+* **Recherche Exacte / Bornes (`left <= right`) :** Converge vers une cible ou le premier élément $\ge \text{target}$ (équivalent à `bisect_left`).
+* **Binary Search on Answer :** On cherche directement la valeur de la réponse entre `min_ans` et `max_ans` en testant chaque candidat `mid` via une fonction booléenne `can_achieve(mid)` en $O(n)$.
+
+### Pièges à Éviter
+* **Boucle infinie :** Avec `while left < right:`, si vous faites `left = mid` (sans `+ 1`), lorsque `right == left + 1`, `mid` vaut `left` et la boucle ne s'arrête jamais. Utilisez `mid = left + (right - left) // 2` et avancez toujours d'au moins 1.
+* **Mauvaise condition d'arrêt :** Soyez cohérent entre `while left <= right:` (intervalle fermé `[left, right]`) et `while left < right:` (intervalle semi-ouvert `[left, right)`).
 
 ---
 
-## 💻 Squelette de Code (Python)
+## 4. Squelettes Python
 
+### Variante A : Recherche Exacte & Borne Gauche (`bisect_left`)
 ```python
-# Variante 1 : Recherche exacte classique
-def binary_search_exact(nums, target):
+def binary_search_left(nums: list[int], target: int) -> int:
     left, right = 0, len(nums) - 1
+    ans = len(nums)
+
     while left <= right:
         mid = left + (right - left) // 2
-        if nums[mid] == target:
-            return mid
-        elif nums[mid] < target:
+        if nums[mid] >= target:
+            ans = mid
+            right = mid - 1  # Continue à chercher plus à gauche
+        else:
             left = mid + 1
-        else:
-            right = mid - 1
-    return -1
 
-# Variante 2 : Recherche de la borne minimale (Binary Search on Answer)
-def binary_search_boundary(low, high, is_valid):
-    while low < high:
-        mid = low + (high - low) // 2
-        if is_valid(mid):
-            high = mid      # mid fonctionne, on essaie de trouver encore plus petit
+    return ans
+```
+
+### Variante B : Binary Search on Answer (Capacité minimale)
+```python
+def min_capacity(weights: list[int], days: int) -> int:
+    def is_feasible(cap: int) -> bool:
+        needed_days, current_load = 1, 0
+        for w in weights:
+            if current_load + w > cap:
+                needed_days += 1
+                current_load = 0
+            current_load += w
+        return needed_days <= days
+
+    left, right = max(weights), sum(weights)
+    ans = right
+    while left <= right:
+        mid = left + (right - left) // 2
+        if is_feasible(mid):
+            ans = mid
+            right = mid - 1  # Tente une capacité plus petite
         else:
-            low = mid + 1   # mid est trop petit, on augmente la borne inférieure
-    return low
+            left = mid + 1
+    return ans
 ```

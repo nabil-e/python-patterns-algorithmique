@@ -1,55 +1,63 @@
-# 03. Stack (Pile & Pile Monotone)
+# 03. STACK & MONOTONIC STACK (PILE)
+*Gérer les structures imbriquées et trouver le prochain élément supérieur*
 
-## 💡 Idée Centrale
-Utiliser une structure **LIFO** (*Last In, First Out* — dernier entré, premier sorti) pour mémoriser l'historique récent des éléments non encore résolus. Dès qu'un nouvel élément permet de résoudre ou d'annuler le sommet de la pile, on dépile (`pop`).
-
-* **Complexité temporelle :** $O(n)$ (chaque élément est empilé et dépilé au maximum une fois).
-* **Complexité spatiale :** $O(n)$ dans le pire cas.
+- **Complexité :** `Temps: O(n) | Espace: O(n)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
+## 1. IDÉE CENTRALE
+Exploiter le principe LIFO (Last-In, First-Out) pour résoudre les imbrications, ou maintenir une **pile monotone** (strictement croissante/décroissante) afin de trouver en O(1) amorti le prochain élément plus grand ou plus petit.
 
-| Ce que demande l'énoncé | Mots-clés en anglais | Variante à choisir |
+---
+
+## 2. INDICES DANS L'ÉNONCÉ
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
 | :--- | :--- | :--- |
-| Vérifier l'imbrication de symboles, balises ou évaluer une expression. | *valid parentheses*, *nested*, *reverse polish notation*, *decode string* | **Pile classique** |
-| Simuler des collisions ou des annulations adjacentes en chaîne. | *asteroid collision*, *remove adjacent duplicates*, *backspace* | **Pile classique** |
-| Trouver, pour chaque élément, le premier élément plus grand ou plus petit à sa droite/gauche. | *next greater element*, *daily temperatures*, *stock span*, *largest rectangle* | **Pile Monotone** (*Monotonic Stack*) |
+| Parenthèses, balises ou expressions imbriquées | `valid parentheses, nested, brackets, decode` | **Stack classique (LIFO)** |
+| Prochain élément plus grand / plus petit à droite | `next greater, warmer temperature, span` | **Monotonic Stack** |
+| Collisions ou annulations adjacentes en chaîne | `collision, adjacent duplicates, asteroid` | **Stack de simulation** |
+| Plus grand rectangle dans un histogramme | `largest rectangle, histogram, trapping` | **Monotonic Stack (index)** |
 
 ---
 
-## 🛠️ Variantes Principales
+## 3. VARIANTES & PIÈGES COURANTS
+### Variantes principales
+- **Stack de validation :** Empiler les ouvrants, dépiler et vérifier la correspondance sur les fermants.
+- **Monotonic Decreasing Stack :** Dépiler tant que l'élément courant est plus grand que le sommet (*Next Greater*).
+- **Stack d'index :** Stocker les indices plutôt que les valeurs pour calculer facilement les distances.
 
-1. **Pile d'appariement / annulation :** On empile les éléments ouvrants/entrants. Lorsqu'un élément fermant/opposé arrive, on vérifie le sommet (`stack[-1]`) et on dépile (`stack.pop()`).
-2. **Pile Monotone (croissante ou décroissante) :** On maintient les éléments de la pile dans un ordre strict. Avant d'ajouter un nouvel élément, une boucle `while` dépile tous les éléments qui brisent cet ordre (ce qui permet de calculer immédiatement la distance ou la différence avec eux). *Astuce : stockez souvent les **indices** plutôt que les valeurs.*
+### Pièges à éviter
+- **`IndexError` sur pile vide :** Toujours vérifier `if stack:` avant d'accéder à `stack[-1]` ou `stack.pop()`.
+- **Pile non vide à la fin :** Après la boucle, vérifier `return not stack` (des ouvrants non fermés peuvent rester).
+- **Condition stricte `<` vs `<=` :** Bien distinguer les doublons selon l'énoncé.
 
 ---
 
-## 💻 Squelette de Code (Python)
+## 4. SQUELETTES PYTHON (TYPÉS)
 
+### Variante A : Monotonic Stack (Next Greater Element)
 ```python
-# Variante 1 : Annulation / Appariement
-def stack_matching(items):
-    stack = []
-    for item in items:
-        if stack and can_cancel(stack[-1], item):
-            stack.pop()
-        else:
-            stack.append(item)
-    return stack
-
-# Variante 2 : Pile Monotone (Next Greater Element)
-def monotonic_stack(nums):
-    n = len(nums)
-    res = [-1] * n
-    stack = []  # Stocke les INDICES des éléments en attente
-    
-    for i, num in enumerate(nums):
-        # Tant que l'élément actuel est plus grand que celui au sommet de la pile
-        while stack and nums[stack[-1]] < num:
-            prev_index = stack.pop()
-            res[prev_index] = num  # Ou (i - prev_index) pour une distance
+def daily_temperatures(temps: list[int]) -> list[int]:
+    res = [0] * len(temps)
+    stack: list[int] = []  # Stocke les indices en attente d'un jour plus chaud
+    for i, t in enumerate(temps):
+        while stack and temps[stack[-1]] < t:
+            prev_idx = stack.pop()
+            res[prev_idx] = i - prev_idx
         stack.append(i)
-        
     return res
+```
+
+### Variante B : Validation de structures imbriquées
+```python
+def is_valid_parentheses(s: str) -> bool:
+    pairs = {")": "(", "]": "[", "}": "{"}
+    stack: list[str] = []
+    for char in s:
+        if char in pairs:
+            if not stack or stack.pop() != pairs[char]:
+                return False
+        else:
+            stack.append(char)
+    return not stack
 ```

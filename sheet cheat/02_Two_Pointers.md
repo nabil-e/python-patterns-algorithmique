@@ -1,55 +1,61 @@
-# 02. Two Pointers (Deux Pointeurs)
+# 02. TWO POINTERS (DEUX POINTEURS)
+*Parcourir ou partitionner linéairement sans mémoire supplémentaire*
 
-## 💡 Idée Centrale
-Utiliser deux indices (ou plus) qui se déplacent dans une structure linéaire (tableau, chaîne) selon des règles précises afin d'éviter les doubles boucles imbriquées et de modifier les données sur place sans mémoire supplémentaire.
-
-* **Complexité temporelle :** $O(n)$ (ou $O(n \log n)$ si un tri préalable est nécessaire).
-* **Complexité spatiale :** $O(1)$ (modification *in-place*).
+- **Complexité :** `Temps: O(n) | Espace: O(1)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
+## 1. IDÉE CENTRALE
+Utiliser deux indices qui évoluent selon une règle logique (convergents depuis les extrémités, ou lent/rapide dans le même sens) pour réduire une recherche quadratique O(n²) en un seul passage O(n) sur place.
 
-| Ce que demande l'énoncé | Mots-clés en anglais | Variante à choisir |
+---
+
+## 2. INDICES DANS L'ÉNONCÉ
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
 | :--- | :--- | :--- |
-| Trouver une paire ou un triplet atteignant une cible dans un tableau **trié**. | *sorted array*, *pair sum*, *3Sum*, *closest sum* | **Pointeurs opposés** (`left`, `right`) |
-| Vérifier une symétrie ou inverser une chaîne/un tableau. | *palindrome*, *reverse*, *valid palindrome* | **Pointeurs opposés** (`left`, `right`) |
-| Supprimer des doublons ou déplacer des éléments sans créer un nouveau tableau. | *in-place*, *remove duplicates*, *move zeroes*, *O(1) extra space* | **Lent & Rapide** (`slow`, `fast`) |
-| Fusionner deux tableaux dont l'un a de l'espace libre à la fin. | *merge sorted array*, *without extra space* | **Parcours depuis la fin** |
+| Tableau trié + chercher une paire ou un triplet | `sorted array, pair sum, 3sum, closest` | **Opposés (left, right)** |
+| Vérifier une symétrie sur une chaîne ou un tableau | `palindrome, reverse, symmetric` | **Opposés (left, right)** |
+| Modifier un tableau sur place sans copie | `in-place, O(1) extra space, remove duplicates` | **Lent / Rapide (slow, fast)** |
+| Fusionner deux tableaux triés avec espace libre à droite | `merge sorted, non-decreasing order` | **Parcours inversé (fin → début)** |
 
 ---
 
-## 🛠️ Variantes & Quand partir de la fin
+## 3. VARIANTES & PIÈGES COURANTS
+### Variantes principales
+- **Pointeurs opposés :** `left = 0`, `right = n - 1` ; avancent l'un vers l'autre sur donnée triée.
+- **Lent / Rapide (Lecture/Écriture) :** `fast` explore, `slow` écrit les éléments valides sur place.
+- **3 Pointeurs :** 1 index fixe (boucle `for`) + 2 pointeurs opposés (*3Sum*) ou partition en 3 zones.
 
-1. **Opposés (`left = 0`, `right = n - 1`) :** Ils avancent l'un vers l'autre. Si la somme est trop petite, on fait `left += 1` ; si elle est trop grande, `right -= 1`.
-2. **Même sens (`slow`, `fast`) :** `fast` explore le tableau, `slow` marque la position où écrire les éléments valides.
-3. **3 Pointeurs :** Une boucle fixe un élément (`i`), et deux pointeurs (`left`, `right`) cherchent dans le reste du tableau (ex: *3Sum*), ou partitionnement en 3 zones (*Dutch National Flag*).
-4. **Partir de la fin (`i = n - 1`) :** Indispensable pour **fusionner sur place** sans écraser les données non lues à gauche, ou quand le calcul dépend des éléments situés à droite.
+### Pièges à éviter
+- **Oublier de trier :** Les pointeurs opposés sur sommes exigent un tableau trié au préalable.
+- **Boucle infinie :** Toujours garantir qu'au moins un pointeur bouge à chaque itération (`left += 1` ou `right -= 1`).
+- **Doublons dans 3Sum :** Sauter les valeurs identiques consécutives après avoir trouvé un triplet valide.
 
 ---
 
-## 💻 Squelette de Code (Python)
+## 4. SQUELETTES PYTHON (TYPÉS)
 
+### Variante A : Pointeurs opposés (Tableau trié)
 ```python
-# Variante 1 : Pointeurs opposés (tableau trié)
-def two_pointers_opposite(arr, target):
-    left, right = 0, len(arr) - 1
+def two_sum_sorted(nums: list[int], target: int) -> list[int]:
+    left, right = 0, len(nums) - 1
     while left < right:
-        current_sum = arr[left] + arr[right]
-        if current_sum == target:
+        curr_sum = nums[left] + nums[right]
+        if curr_sum == target:
             return [left, right]
-        elif current_sum < target:
-            left += 1   # Besoin d'une plus grande valeur
+        elif curr_sum < target:
+            left += 1
         else:
-            right -= 1  # Besoin d'une plus petite valeur
+            right -= 1
     return []
+```
 
-# Variante 2 : Lent et Rapide (modification sur place)
-def two_pointers_same_direction(arr):
-    slow = 0
-    for fast in range(len(arr)):
-        if arr[fast] != 0:  # Condition de conservation
-            arr[slow], arr[fast] = arr[fast], arr[slow]
+### Variante B : Lent / Rapide (Déplacement sur place)
+```python
+def move_zeroes(nums: list[int]) -> None:
+    slow = 0  # Position d'écriture du prochain élément non nul
+    for fast in range(len(nums)):
+        if nums[fast] != 0:
+            nums[slow], nums[fast] = nums[fast], nums[slow]
             slow += 1
-    return slow
 ```

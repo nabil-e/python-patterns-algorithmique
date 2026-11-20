@@ -1,79 +1,70 @@
-# 06. Prefix / Suffix Sum (Sommes Préfixes et Suffixes)
-
-## 💡 Idée Centrale
-Pré-calculer les sommes cumulées depuis le début (préfixe) ou depuis la fin (suffixe) d'un tableau. Cela permet d'obtenir la somme de n'importe quel segment `[i, j]` en temps constant $O(1)$ via la formule `prefix[j + 1] - prefix[i]`, évitant ainsi des boucles imbriquées.
-
-* **Complexité Temporelle :** $O(n)$ pour la construction, $O(1)$ par requête
-* **Complexité Spatiale :** $O(n)$ (ou $O(1)$ si calculé à la volée dans une variable)
+# 06. Prefix & Suffix Sum (Sommes Préfixes / Suffixes)
+> **Pattern 06 / 14** • **Temps :** `O(n)` • **Espace :** `O(n)` ou `O(1)`
 
 ---
 
-## 🔍 Indices dans l'énoncé & Mots-clés
-| Ce que dit l'énoncé | Mots-clés anglais fréquents |
-| :--- | :--- |
-| Calculer la somme de plusieurs sous-tableaux définis par des plages d'indices. | *range sum query*, *sum between indices i and j*, *immutable array* |
-| Trouver le nombre de sous-tableaux dont la somme vaut exactement $k$ (**avec nombres négatifs**). | *subarray sum equals k*, *number of subarrays*, *divisible by k* |
-| Calculer une valeur à l'index $i$ en combinant tout ce qui est à gauche et à droite (sans division). | *product of array except self*, *left and right*, *pivot index*, *equilibrium* |
+## 1. Idée Centrale
+Pré-calculer la somme (ou le produit) cumulée depuis le début (**Prefix**) et/ou depuis la fin (**Suffix**). La somme d'un sous-tableau `[i..j]` s'obtient alors instantanément par soustraction : `prefix[j+1] - prefix[i]`, évitant de recalculer la même plage plusieurs fois.
 
 ---
 
-## 🧩 Variantes Principales
+## 2. Indices dans l'énoncé
 
-### 1. Tableau de Préfixes Classique (Range Queries)
-On crée un tableau `prefix` de taille $n + 1$ commençant par `0` (pour éviter de gérer le cas limite `i == 0`).
-
-### 2. Prefix Sum + Hash Map (Le Duo Redoutable)
-Si la somme cumulée actuelle est `curr_sum` et qu'on cherche un sous-tableau de somme `k`, il suffit de vérifier combien de fois la somme `curr_sum - k` a déjà été vue auparavant dans notre dictionnaire.
-
-### 3. Préfixe et Suffixe combinés (Gauche & Droite)
-Utile pour calculer le produit de tous les éléments sauf `nums[i]` : on fait une passe de gauche à droite pour accumuler les préfixes, puis une passe de droite à gauche pour multiplier par les suffixes.
+| Indice dans l'énoncé | Mots-clés (Anglais) | Approche recommandée |
+| :--- | :--- | :--- |
+| Calculer la somme de plusieurs plages fixes sur un tableau immuable | `range sum query`, `immutable array`, `sum of subarray` | Prefix Sum 1D standard (`O(1)` par requête) |
+| Compter les sous-tableaux de somme exactement égale à K (avec négatifs) | `subarray sum equals k`, `contiguous subarray`, `negative numbers` | Prefix Sum + Hash Map (`curr_sum - k`) |
+| Calculer le produit (ou min/max) de tous les éléments sauf l'index actuel | `product of array except self`, `without division` | Double passe Prefix & Suffix sur place (`O(1)` espace) |
+| Trouver un index pivot où la somme à gauche égale celle à droite | `pivot index`, `equilibrium point`, `left sum equals right` | Somme totale moins cumul courant (`total - left - x == left`) |
 
 ---
 
-## ⚠️ Pièges à éviter
-* **Oublier d'initialiser la Hash Map avec `{0: 1}` :** Si un sous-tableau commençant dès l'indice `0` a une somme égale à `k`, alors `curr_sum - k == 0`. Sans `{0: 1}`, ce sous-tableau ne sera pas comptabilisé.
-* **Décalage d'indice (+1) :** Dans un tableau `prefix` de taille $n + 1$, `prefix[i]` représente la somme des $i$ premiers éléments (indices `0` à `i - 1`).
+## 3. Variantes & Pièges Courants
+
+### Variantes principales
+* **Prefix Sum 1D / 2D :** Tableau de taille `n + 1` avec `prefix[0] = 0` pour simplifier le calcul de plage `prefix[r + 1] - prefix[l]`.
+* **Prefix Sum + Hash Map :** Stocke la fréquence de chaque somme préfixe rencontrée. Indispensable dès que le tableau contient des **nombres négatifs ou des zéros** (où Sliding Window échoue).
+* **Prefix & Suffix sur place :** Deux passes successives (gauche→droite puis droite→gauche) directement dans le tableau résultat pour réduire l'espace à `O(1)`.
+
+### Pièges à éviter
+* **Oublier l'état initial `{0: 1}` :** Dans Prefix Sum + Hash Map, ne pas initialiser `counts = {0: 1}` fait rater tous les sous-tableaux valides commençant à l'index `0`.
+* **Décalage d'index (Off-by-one) :** Avec un tableau `prefix` de taille `n + 1`, la somme de `nums[l..r]` inclus est `prefix[r + 1] - prefix[l]`, et non `prefix[r] - prefix[l]`.
+* **Utiliser Sliding Window avec des négatifs :** Si l'énoncé autorise des valeurs négatives pour une somme cible `k`, la fenêtre n'est plus monotone : basculez immédiatement sur Prefix Sum + Hash Map.
 
 ---
 
-## 💻 Squelettes de Code (Python)
+## 4. Squelettes de Code (Python)
 
-### Variante A : Prefix Sum + Hash Map (Sous-tableaux de somme K)
+### Variante 1 : Subarray Sum Equals K (Prefix Sum + Hash Map)
 ```python
 def subarray_sum_equals_k(nums: list[int], k: int) -> int:
-    # {somme_prefixe: nombre_d_occurrences}
-    prefix_counts = {0: 1}
+    prefix_counts: dict[int, int] = {0: 1}  # Base : somme 0 vue 1 fois avant le début
     curr_sum = 0
-    count = 0
+    total_subarrays = 0
 
     for num in nums:
         curr_sum += num
-        # Si (curr_sum - k) a déjà été vu, le segment entre les deux vaut k
-        diff = curr_sum - k
-        if diff in prefix_counts:
-            count += prefix_counts[diff]
-            
+        # Si (curr_sum - k) a déjà été vu, les sous-tableaux entre ces points valent k
+        total_subarrays += prefix_counts.get(curr_sum - k, 0)
         prefix_counts[curr_sum] = prefix_counts.get(curr_sum, 0) + 1
 
-    return count
+    return total_subarrays
 ```
 
-### Variante B : Préfixe & Suffixe sans mémoire extra (Produit sauf soi-même)
+### Variante 2 : Product Except Self (Prefix & Suffix en espace O(1))
 ```python
 def product_except_self(nums: list[int]) -> list[int]:
     n = len(nums)
     res = [1] * n
 
-    # 1. Passe Préfixe (de gauche à droite)
     prefix = 1
     for i in range(n):
-        res[i] = prefix
+        res[i] = prefix          # Produit de tout ce qui est à gauche de i
         prefix *= nums[i]
 
-    # 2. Passe Suffixe (de droite à gauche)
     suffix = 1
     for i in range(n - 1, -1, -1):
-        res[i] *= suffix
+        res[i] *= suffix         # Multiplie par tout ce qui est à droite de i
         suffix *= nums[i]
 
     return res
