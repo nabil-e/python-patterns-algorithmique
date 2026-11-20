@@ -43,3 +43,13 @@ Repère ces indices pour identifier immédiatement le pattern **Heap** :
 1. **Simulations répétitives sur le max/min :** Extraire les deux plus grosses pierres, les écraser et réinsérer le reste (**1046**), ou diviser la plus grande pile par sa racine carrée (**2558**).
 2. **Problèmes de type "Top K" :** Maintenir un **Min-Heap de taille fixe $K$** pour trouver les $K$ plus grands éléments en $O(n \log K)$ sans trier tout le tableau.
 3. **Flux continu (Streaming) :** Répondre à des requêtes `add(val)` en temps logarithmique (**703**).
+---
+
+## ⚠️ Cas limites à vérifier
+- **`k == 0` ou `k > len(nums)` :** Toujours vérifier ces bornes avant d'extraire `min_heap` pour éviter un `IndexError`.
+- **Tuples avec égalité sur la priorité (`TypeError: '<' not supported between instances`) :** Si tu insères `(priorite, objet)` dans `heapq` et que deux objets ont la même priorité, Python compare le second élément. Ajouter un compteur unique `(priorite, index, objet)` évite tout crash.
+- **Oubli du signe moins (`-`) sur Max-Heap :** En Python, `heapq` est **toujours** un Min-Heap. Oublier d'inverser le signe à l'insertion *ou* à l'extraction fausse complètement le résultat.
+
+## 🚫 Quand éviter ce pattern
+- **Besoin de tout le tableau trié :** Si $K \approx N$, un tri natif `nums.sort()` en $O(n \log n)$ est plus rapide en pratique (implémenté en C avec Timsort) qu'un tas Python.
+- **Accès simultané au minimum ET au maximum, ou suppression d'un élément arbitraire :** `heapq` ne permet d'accéder efficacement qu'à la racine (`heap`). Pour supprimer un élément quelconque en $O(\log n)$, utiliser un double tas avec suppression paresseuse (*lazy deletion*).

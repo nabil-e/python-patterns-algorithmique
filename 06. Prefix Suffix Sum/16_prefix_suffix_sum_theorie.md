@@ -44,3 +44,13 @@ Repère ces indices pour identifier immédiatement ce pattern :
 ## 4. Complexité
 * **Temps :** $O(n)$ pour construire le tableau préfixe, puis $O(1)$ par requête.
 * **Espace :** $O(n)$ pour stocker le tableau préfixe (parfois réductible à $O(1)$ si on modifie le tableau en place ou si l'on n'a besoin que d'une somme courante).
+---
+
+## ⚠️ Cas limites à vérifier
+- **Décalage d'index pour `left = 0` :** Sans le zéro initial (`prefix =  + ...`), la formule `prefix[right] - prefix[left - 1]` plante quand `left == 0`. Toujours utiliser un tableau de taille `n + 1` commençant par `0`.
+- **Presence de zéros dans `Product of Array Except Self` :** Un seul zéro annule le produit global, deux zéros rendent tout le tableau nul. L'approche préfixe/suffixe gère ce cas naturellement sans division par zéro.
+- **Sous-tableau vide vs non vide :** Dans `Subarray Sum Equals K`, initialiser `compte_prefixes = 1` est indispensable pour comptabiliser un sous-tableau qui démarre dès l'index `0`.
+
+## 🚫 Quand éviter ce pattern
+- **Tableau modifié fréquemment entre les requêtes :** Si l'énoncé alterne mises à jour (`update(i, val)`) et requêtes de somme (`sumRange(l, r)`), recalculer le préfixe coûte $O(n)$ à chaque modification. Utiliser un **Segment Tree** ou un **Fenwick Tree (BIT)**.
+- **Fenêtre de taille fixe ou glissante sur positifs :** Si on cherche juste la somme max de taille $k$ sur des nombres positifs, **Sliding Window** fait le même travail en **$O(1)$ espace** au lieu de $O(n)$.

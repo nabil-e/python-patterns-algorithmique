@@ -66,3 +66,12 @@ Repère ces indices pour identifier immédiatement ce pattern :
 | **Fast & Slow** | Milieu de liste, cycle, palindrome sur liste chaînée | $O(n)$ | $O(1)$ |
 | **In-place Reversal** | Inverser une liste entière ou un sous-segment | $O(n)$ | $O(1)$ |
 | **Gap Pointers** | Supprimer le $N$-ième élément depuis la fin | $O(n)$ | $O(1)$ |
+---
+
+## ⚠️ Cas limites à vérifier
+- **Liste vide (`head is None`) :** Toujours tester `if not head:` en tout début de fonction.
+- **Liste à un seul nœud (`head.next is None`) :** Vérifier que les pointeurs `slow` et `fast` (ou `prev` et `curr`) ne tentent pas d'accéder à `head.next.next` sans garde-fou.
+- **Suppression ou modification de la tête (`head`) :** Sans `dummy = ListNode(0, head)`, supprimer le premier élément oblige à écrire un `if` séparé qui est souvent source de bugs.
+
+## 🚫 Quand éviter ce pattern
+- **Besoin d'accès direct par index (`nums[i]`) ou de recherche binaire :** Une liste chaînée n'offre pas d'accès aléatoire en $O(1)$. Si l'algorithme nécessite de sauter d'un index à l'autre, convertir ou utiliser un tableau (`list`).

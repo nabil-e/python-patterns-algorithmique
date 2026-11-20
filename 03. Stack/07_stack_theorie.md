@@ -55,3 +55,13 @@ Repère ces indices pour identifier le pattern **Stack** :
 - Lorsque le traitement de l'élément courant dépend **uniquement de l'élément non résolu le plus récent**.
 - Lorsque la suppression d'une paire crée une **nouvelle adjacence** qu'il faut immédiatement revérifier.
 - Pour remplacer une récursion par une approche itérative explicite.
+---
+
+## ⚠️ Cas limites à vérifier
+- **Dépiler sur une pile vide (`IndexError`) :** Toujours tester `if not stack:` avant d'accéder à `stack[-1]` ou d'appeler `stack.pop()` (ex: chaîne commençant par une parenthèse fermante `")("`).
+- **Pile non vide à la fin du parcours :** Une chaîne comme `"((("` traverse toute la boucle sans erreur. Ne jamais retourner `True` directement à la fin : toujours vérifier `return len(stack) == 0`.
+- **Chaîne vide `""` :** Une chaîne vide est généralement considérée comme valide (`True`).
+
+## 🚫 Quand éviter ce pattern
+- **Un seul type de symbole sans imbrication complexe :** Si l'énoncé ne comporte qu'un seul type de parenthèse `(` et `)`, un simple compteur entier `balance += 1 / -= 1` résout le problème en **$O(1)$ espace** au lieu de $O(n)$.
+- **Besoin d'accéder aux éléments du milieu :** Une pile ne donne accès qu'au sommet (`stack[-1]`). Si l'algorithme exige de retirer des éléments des deux côtés (tête et queue), utiliser `collections.deque`.

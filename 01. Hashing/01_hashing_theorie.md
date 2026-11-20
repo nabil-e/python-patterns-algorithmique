@@ -29,3 +29,13 @@ Repère ces expressions dans les problèmes LeetCode pour déclencher immédiate
 2. **Compter des occurrences :** Pour comparer deux chaînes (anagrammes) ou trouver un élément selon sa fréquence.
 3. **Mémoriser le passé (One-Pass) :** Stocker les valeurs déjà rencontrées (ou leur dernier index) pendant le parcours unique d'un tableau.
 4. **Grouper des éléments :** Regrouper des objets partageant une même signature (ex. : tuple de fréquences ou chaîne triée).
+---
+
+## ⚠️ Cas limites à vérifier
+- **Tableau ou chaîne vide (`[]` ou `""`) :** Vérifier que le retour par défaut (`False`, `0`, `[]`, `-1`) est cohérent avant d'itérer.
+- **Clés non hachables (`TypeError: unhashable type: 'list'`) :** Une `list` ou un `set` ne peut pas servir de clé dans un `dict`. Toujours convertir en `tuple` (ex: `tuple(sorted(mot))` pour les anagrammes).
+- **Doublons dans l'entrée :** Si l'énoncé demande des éléments distincts ou des paires uniques, vérifier si un `set` suffit ou s'il faut compter les occurrences avec `Counter`.
+
+## 🚫 Quand éviter ce pattern
+- **Contrainte stricte d'espace $O(1)$ :** Si l'énoncé interdit d'allouer de la mémoire supplémentaire (*"in-place"*), préférer le **Tri + Two Pointers**.
+- **Recherche d'ordre, de rang ou de proximité :** Une table de hachage ne conserve pas le tri. Si l'énoncé demande le *K-ième plus grand*, le *plus proche voisin* ou une *plage de valeurs*, utiliser un **Heap** ou **Binary Search**.

@@ -54,3 +54,13 @@ Repère ces indices pour identifier immédiatement le pattern **Sorting Interval
 1. **Fusion d'intervalles :** Trier par `start` croissant (`intervals.sort(key=lambda x: x[0])`), puis fusionner tant que `curr[0] <= prev[1]`.
 2. **Intersection de deux listes d'intervalles triées :** Utiliser deux pointeurs (`i` et `j`), calculer `lo = max(A[i][0], B[j][0])` et `hi = min(A[i][1], B[j][1])`, et avancer le pointeur qui se termine le plus tôt.
 3. **Sélection maximale / Flèches minimales :** Trier par `end` croissant (`intervals.sort(key=lambda x: x[1])`) pour libérer l'espace le plus vite possible.
+---
+
+## ⚠️ Cas limites à vérifier
+- **Liste vide (`[]`) ou à un seul intervalle (``) :** Toujours protéger l'accès initial `merged = [intervals]` par `if not intervals: return []`.
+- **Intervalles qui se touchent juste (ex: `` et ``) :** Vérifier dans l'énoncé si la borne partagée `2` compte comme un chevauchement (`<=` pour fusionner des plages) ou non (`<` pour des réunions consécutives autorisées).
+- **Intervalle totalement englobé (ex: `` suivi de ``) :** Lors d'une fusion, toujours prendre `max(last_end, end)` et non simplement `end`, sinon l'intervalle rétrécit !
+
+## 🚫 Quand éviter ce pattern
+- **Intervalles déjà triés avec une seule insertion (`Insert Interval`) :** Inutile de relancer un tri complet en $O(n \log n)$ si l'entrée est déjà triée ; un parcours linéaire en **$O(n)$** suffit.
+- **Ajout dynamique d'intervalles en flux continu :** Si on doit insérer des créneaux un par un et vérifier les conflits à chaque appel (ex: calendrier), utiliser **Binary Search (`bisect`)** ou un arbre d'intervalles.

@@ -54,3 +54,13 @@ Repère ces indices pour identifier immédiatement le Sliding Window :
 * **Contraintes sur le contenu :** *"At most k distinct characters"*, *"Contains all characters"*.
 
 > **Attention :** Si l'énoncé parle de *"Subsequence"* (sous-séquence non contiguë), ce n'est **pas** du Sliding Window (c'est généralement Two Pointers ou Dynamic Programming).
+---
+
+## ⚠️ Cas limites à vérifier
+- **Taille de fenêtre $k$ supérieure à la taille du tableau (`k > len(nums)`) :** Toujours vérifier `if len(nums) < k: return 0` (ou `None`) avant d'initialiser la première fenêtre.
+- **Aucun sous-tableau valide trouvé (fenêtre variable minimale) :** Si `min_len` est initialisé à `float("inf")`, penser à retourner `0` (et non `inf`) si aucune fenêtre n'a satisfait la condition.
+- **Fenêtre de taille 1 (`k = 1`) :** S'assurer que l'ajout puis le retrait immédiat de l'élément ne corrompt pas l'état de la fenêtre.
+
+## 🚫 Quand éviter ce pattern
+- **Somme exacte $K$ en présence de nombres négatifs ou de zéros :** La fenêtre glissante repose sur la monotonie (agrandir = augmenter la somme, rétrécir = diminuer la somme). Avec des négatifs, cette règle casse : utiliser obligatoirement **Prefix Sum + Hashing**.
+- **Sous-séquences non contiguës :** Sliding Window ne fonctionne que sur des éléments **adjacents** (*subarray* / *substring*). Si l'on peut sauter des éléments (*subsequence*), passer aux **Two Pointers**, **Greedy** ou à la **Programmation Dynamique (DP)**.

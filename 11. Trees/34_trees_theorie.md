@@ -53,3 +53,12 @@ Repère ces indices pour choisir immédiatement la bonne approche :
 | **DFS (Récursif)** | Profondeur max, validation BST, chemins, inversion | $O(n)$ | $O(h)$ (pile d'appels, $O(n)$ pire cas) |
 | **BFS (`deque`)** | Parcours par niveau, profondeur min, vue de droite | $O(n)$ | $O(w)$ (largeur max, jusqu'à $n/2$) |
 | **Recherche BST** | Trouver/insérer une valeur dans un BST | $O(h)$ | $O(1)$ en itératif |
+---
+
+## ⚠️ Cas limites à vérifier
+- **Arbre vide (`root is None`) :** Cas de base obligatoire en première ligne de toute fonction récursive DFS ou avant d'initialiser une file BFS `deque([root])`.
+- **Arbre dégénéré (peigne / liste chaînée) :** Un arbre déséquilibré de $10^5$ nœuds peut atteindre la limite de récursion Python (`RecursionError`, fixée par défaut à 1000 appels). Dans ce cas, privilégier un parcours itératif avec une `stack` ou `deque`.
+- **Validation d'un BST (`Validate Binary Search Tree`) :** Vérifier uniquement `node.left.val < node.val < node.right.val` est **faux** : il faut transmettre les bornes globales `(min_val, max_val)` héritées des ancêtres.
+
+## 🚫 Quand éviter ce pattern
+- **Structure contenant des cycles (Graphe général) :** Un arbre est acyclique par définition, donc on n'a pas besoin de `visited`. Dès qu'un nœud peut avoir plusieurs parents ou former une boucle, basculer sur le pattern **Graphs (DFS/BFS + `visited` set)**.

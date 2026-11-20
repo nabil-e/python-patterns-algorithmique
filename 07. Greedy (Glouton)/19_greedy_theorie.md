@@ -30,3 +30,12 @@ Repère ces indices dans les énoncés :
 ## 4. Complexité
 * **Temps :** Souvent **$O(n \log n)$** lorsqu'un tri initial est nécessaire, ou **$O(n)$** si les données sont déjà ordonnées ou traitées en une passe.
 * **Espace :** **$O(1)$** (hors espace utilisé par le tri de Python).
+---
+
+## ⚠️ Cas limites à vérifier
+- **Entrée vide ou impossible à satisfaire :** Vérifier les cas où aucune solution n'existe (ex: impossible de rendre la monnaie ou d'atteindre la dernière case -> retourner `False` ou `-1`).
+- **Égalités lors du tri (tie-breaking) :** Quand deux éléments ont la même clé principale (ex: même heure de fin ou même ratio), vérifier si l'ordre secondaire importe.
+- **Valeurs nulles ou négatives :** Un choix glouton basé sur un produit ou une somme cumulée peut s'inverser en présence de nombres négatifs.
+
+## 🚫 Quand éviter ce pattern
+- **Un choix local optimal bloque une meilleure combinaison future :** Exemple classique : rendre la monnaie avec les pièces `` pour atteindre `6`. Le glouton prend `4 + 1 + 1` (3 pièces) alors que l'optimal est `3 + 3` (2 pièces). Dès qu'un contre-exemple existe, passer à la **Programmation Dynamique (DP)** ou au **Backtracking**.
