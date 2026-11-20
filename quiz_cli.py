@@ -4,6 +4,7 @@ import os
 import random
 import re
 import sys
+import time
 
 # Codes couleurs ANSI pour le terminal
 CYAN = "\033[96m"
@@ -18,8 +19,8 @@ RESET = "\033[0m"
 def nettoyer_html(texte: str) -> str:
     """Convertit les balises HTML d'Anki en texte lisible dans le terminal."""
     texte = texte.replace("<br>", "\n").replace("<br/>", "\n").replace("<br />", "\n")
-    texte = re.sub(r"<code>(.*?)</code>", f"{JAUNE}\\1{RESET}", texte, flags=re.DOTALL)
-    texte = re.sub(r"<b>(.*?)</b>", f"{GRAS}\\1{RESET}", texte, flags=re.DOTALL)
+    texte = re.sub(r"<code>(.*?)</code>", f"{JAUNE}\1{RESET}", texte, flags=re.DOTALL)
+    texte = re.sub(r"<b>(.*?)</b>", f"{GRAS}\1{RESET}", texte, flags=re.DOTALL)
     texte = re.sub(r"<[^>]+>", "", texte)
     return html.unescape(texte).strip()
 
@@ -52,9 +53,17 @@ def effacer_ecran():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+def formater_duree(secondes: float) -> str:
+    minutes = int(secondes // 60)
+    sec = int(secondes % 60)
+    if minutes > 0:
+        return f"{minutes} min {sec:02d} s"
+    return f"{sec} s"
+
+
 def choisir_mode(cartes: list[dict]) -> list[dict]:
     """Affiche le menu des thèmes et retourne les cartes sélectionnées."""
-    themes = sorted(list({c["theme"] for c in cartes}))
+    themes = sorted(list({c["theme"] for c in cartes}), key=lambda t: (int(t.split("_")[0]) if t.split("_")[0].isdigit() else 999, t))
 
     print(f"{CYAN}{GRAS}=== 🧠 ENTRAÎNEMENT FLASHCARDS ALGORITHMIQUES ==={RESET}\n")
     print("Choisis ton mode de révision :\n")
@@ -84,9 +93,12 @@ def choisir_mode(cartes: list[dict]) -> list[dict]:
 
 
 def lancer_session(cartes: list[dict]):
-    """Exécute une session de révision avec relance des cartes ratées."""
+    """Exécute une session de révision avec score 1er passage, chrono et relance des ratées."""
+    total_initial = len(cartes)
     a_reviser = list(cartes)
     tour = 1
+    reussies_premier_coup = 0
+    debut_chrono = time.perf_counter()
 
     while a_reviser:
         effacer_ecran()
@@ -108,6 +120,8 @@ def lancer_session(cartes: list[dict]):
             while True:
                 eval_user = input(f"As-tu trouvé la bonne réponse ? ({VERT}o{RESET}/{ROUGE}n{RESET}) : ").strip().lower()
                 if eval_user in ("o", "oui", "y", "yes"):
+                    if tour == 1:
+                        reussies_premier_coup += 1
                     break
                 if eval_user in ("n", "non", "no"):
                     ratees.append(carte)
@@ -123,7 +137,19 @@ def lancer_session(cartes: list[dict]):
             random.shuffle(a_reviser)
             tour += 1
         else:
-            print(f"{VERT}{GRAS}🎉 Félicitations ! Tu as validé 100 % des cartes de cette session !{RESET}\n")
+            duree = time.perf_counter() - debut_chrono
+            pourcentage = (reussies_premier_coup / total_initial) * 100 if total_initial else 0
+            couleur_score = VERT if pourcentage >= 85 else (JAUNE if pourcentage >= 60 else ROUGE)
+
+            print(f"{VERT}{GRAS}🎉 Session terminée — 100 % des cartes validées !{RESET}\n")
+            print(f"📊 {GRAS}Bilan de la session :{RESET}")
+            print(f"   • Score 1er passage : {couleur_score}{GRAS}{reussies_premier_coup}/{total_initial} ({pourcentage:.0f} %){RESET}")
+            print(f"   • Nombre de tours   : {tour}")
+            print(f"   • Temps total       : {formater_duree(duree)}")
+            if pourcentage >= 85:
+                print(f"\n{VERT}✅ Critère de maîtrise atteint (≥ 85 %) !{RESET}\n")
+            else:
+                print(f"\n{JAUNE}💡 Objectif recommandé : viser ≥ 85 % au 1er passage avant de passer au thème suivant.{RESET}\n")
             break
 
 

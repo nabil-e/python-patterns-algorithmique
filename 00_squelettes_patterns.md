@@ -1,6 +1,6 @@
 # 🧩 Squelettes Génériques des 11 Patterns (Boilerplates)
 
-Utilise ces structures abstraites dans ton fichier `main.py` comme point de départ pour résoudre un exercice sans partir d'une feuille blanche.
+Utilise ces structures abstraites en **Python typé (noms en anglais, commentaires en français)** dans ton fichier `main.py` comme point de départ pour résoudre un exercice sans partir d'une feuille blanche.
 
 ---
 
@@ -8,26 +8,27 @@ Utilise ces structures abstraites dans ton fichier `main.py` comme point de dép
 
 ### Recherche de complément / Mémoire de passage
 ```python
-def squelette_hashing_lookup(elements):
-    vus = {}  # ou set() si seule la présence compte
-    for index, valeur in enumerate(elements):
-        cible = ...  # Calcul du complément recherché
-        if cible in vus:
-            return ...  # Solution trouvée en O(1)
-        vus[valeur] = index  # Mémorisation de l'état courant
-    return ...
+def hashing_lookup_skeleton(nums: list[int], target: int) -> list[int]:
+    seen: dict[int, int] = {}  # ou set() si seule la présence compte
+    for idx, val in enumerate(nums):
+        complement = target - val  # Calcul du complément recherché
+        if complement in seen:
+            return [seen[complement], idx]  # Solution trouvée en O(1)
+        seen[val] = idx  # Mémorisation de l'état courant
+    return []
 ```
 
 ### Comptage de fréquences
 ```python
 from collections import Counter
 
-def squelette_hashing_frequences(elements):
-    compteur = Counter(elements)
-    for element, freq in compteur.items():
-        if ...:  # Condition sur la fréquence
-            return ...
-    return ...
+
+def hashing_frequency_skeleton(items: list[str]) -> str:
+    counts = Counter(items)
+    for item, freq in counts.items():
+        if freq == 1:  # Condition sur la fréquence
+            return item
+    return ""
 ```
 
 ---
@@ -36,24 +37,25 @@ def squelette_hashing_frequences(elements):
 
 ### Pointeurs convergents (extrémités vers centre)
 ```python
-def squelette_two_pointers_convergents(nums):
+def two_pointers_converging_skeleton(nums: list[int], target: int) -> list[int]:
     left, right = 0, len(nums) - 1
-    while left < right:
-        if ...:  # Solution trouvée
-            return ...
-        elif ...:  # Besoin d'augmenter la valeur
+    while left < right:  # ou <= selon si le centre doit être traité
+        curr_sum = nums[left] + nums[right]
+        if curr_sum == target:  # Solution trouvée
+            return [left, right]
+        elif curr_sum < target:  # Besoin d'augmenter la valeur
             left += 1
         else:  # Besoin de diminuer la valeur
             right -= 1
-    return ...
+    return []
 ```
 
 ### Pointeurs lent et rapide (modification en place)
 ```python
-def squelette_two_pointers_slow_fast(nums):
+def two_pointers_slow_fast_skeleton(nums: list[int]) -> int:
     slow = 0  # Position d'écriture valide
-    for fast in range(len(nums)):
-        if ...:  # Condition pour conserver nums[fast]
+    for fast in range(len(nums)):  # Pointeur d'exploration
+        if nums[fast] != 0:  # Condition pour conserver nums[fast]
             nums[slow] = nums[fast]
             slow += 1
     return slow
@@ -65,15 +67,15 @@ def squelette_two_pointers_slow_fast(nums):
 
 ### Validation d'imbrication / Élimination adjacente
 ```python
-def squelette_stack(sequence):
-    stack = []
-    correspondances = {")": "(", "]": "[", "}": "{"}
+def stack_skeleton(sequence: str) -> bool:
+    stack: list[str] = []
+    pairs: dict[str, str] = {")": "(", "]": "[", "}": "{"}
 
-    for item in sequence:
-        if ...:  # Condition d'ouverture ou d'ajout
-            stack.append(item)
+    for char in sequence:
+        if char not in pairs:  # Condition d'ouverture ou d'ajout
+            stack.append(char)
         else:
-            if not stack or ...:  # Pile vide ou incompatibilité avec stack[-1]
+            if not stack or stack[-1] != pairs[char]:  # Pile vide ou incompatibilité
                 return False
             stack.pop()
 
@@ -86,9 +88,10 @@ def squelette_stack(sequence):
 
 ### Recherche de frontière monotone (première occurrence valide)
 ```python
-def squelette_binary_search(low, high):
-    def condition(mid):
-        return ...
+def binary_search_skeleton(low: int, high: int) -> int:
+    def condition(mid: int) -> bool:
+        # Retourne True si mid satisfait le critère recherché
+        return mid * mid >= 10
 
     while low < high:
         mid = low + (high - low) // 2
@@ -105,34 +108,45 @@ def squelette_binary_search(low, high):
 
 ### Fenêtre de taille fixe `k`
 ```python
-def squelette_sliding_window_fixe(nums, k):
-    etat_fenetre = 0
-    resultat = float("-inf")
+def sliding_window_fixed_skeleton(nums: list[int], k: int) -> int:
+    window_sum = 0
+    max_result = float("-inf")
 
     for right in range(len(nums)):
-        etat_fenetre += nums[right]
+        # 1. Ajouter nums[right] à l'état de la fenêtre
+        window_sum += nums[right]
+
+        # 2. Une fois la taille k atteinte
         if right >= k - 1:
-            resultat = max(resultat, etat_fenetre)
-            etat_fenetre -= nums[right - k + 1]
-    return resultat
+            max_result = max(max_result, window_sum)
+            # 3. Retirer l'élément sortant à gauche
+            window_sum -= nums[right - k + 1]
+
+    return int(max_result)
 ```
 
 ### Fenêtre de taille variable (dynamique)
 ```python
 from collections import defaultdict
 
-def squelette_sliding_window_variable(s):
-    etat = defaultdict(int)
+
+def sliding_window_variable_skeleton(s: str) -> int:
+    counts: dict[str, int] = defaultdict(int)
     left = 0
     max_len = 0
 
     for right in range(len(s)):
-        etat[s[right]] += 1
-        while ...:  # Tant que la fenêtre est invalide
-            etat[s[left]] -= 1
-            if etat[s[left]] == 0:
-                del etat[s[left]]
+        # 1. Entrée de s[right] dans la fenêtre
+        counts[s[right]] += 1
+
+        # 2. Tant que la fenêtre est invalide, rétrécir par la gauche
+        while counts[s[right]] > 1:
+            counts[s[left]] -= 1
+            if counts[s[left]] == 0:
+                del counts[s[left]]
             left += 1
+
+        # 3. Mise à jour de la meilleure fenêtre valide
         max_len = max(max_len, right - left + 1)
 
     return max_len
@@ -142,37 +156,54 @@ def squelette_sliding_window_variable(s):
 
 ## 6. Prefix / Suffix Sum
 
-### Somme de plage en O(1) & Prefix Sum + Hashing
+### Somme de plage en O(1)
+```python
+def prefix_sum_skeleton(nums: list[int]) -> list[int]:
+    n = len(nums)
+    prefix = [0] * (n + 1)
+    for i in range(n):
+        prefix[i + 1] = prefix[i] + nums[i]
+
+    # Somme de l'index left à right inclus :
+    # range_sum = prefix[right + 1] - prefix[left]
+    return prefix
+```
+
+### Prefix Sum + Hashing (Sous-tableaux de somme K)
 ```python
 from collections import defaultdict
 
-def squelette_prefix_sum_hashing(nums, k):
-    compte_prefixes = defaultdict(int)
-    compte_prefixes[0] = 1
-    somme_courante = 0
-    total_sous_tableaux = 0
+
+def prefix_sum_hashing_skeleton(nums: list[int], k: int) -> int:
+    prefix_counts: dict[int, int] = defaultdict(int)
+    prefix_counts[0] = 1
+    curr_sum = 0
+    total_subarrays = 0
 
     for num in nums:
-        somme_courante += num
-        total_sous_tableaux += compte_prefixes[somme_courante - k]
-        compte_prefixes[somme_courante] += 1
+        curr_sum += num
+        total_subarrays += prefix_counts[curr_sum - k]
+        prefix_counts[curr_sum] += 1
 
-    return total_sous_tableaux
+    return total_subarrays
 ```
 
 ---
 
-## 7. Greedy (Glouton)
+## 7. Greedy
 
 ### Choix local optimal après tri
 ```python
-def squelette_greedy(elements):
-    elements.sort(key=lambda x: ...)
-    resultat = 0
-    for item in elements:
-        if ...:  # Vérifier si le choix local est possible
-            resultat += 1
-    return resultat
+def greedy_skeleton(items: list[tuple[int, int]]) -> int:
+    items.sort(key=lambda x: x[1])  # Tri selon le critère glouton
+    curr_state = 0
+    result = 0
+
+    for start, end in items:
+        if start >= curr_state:  # Vérifier si le choix local est possible
+            curr_state = end
+            result += 1
+    return result
 ```
 
 ---
@@ -181,102 +212,157 @@ def squelette_greedy(elements):
 
 ### Fusion d'intervalles qui se chevauchent
 ```python
-def squelette_intervals(intervals):
+def intervals_merge_skeleton(intervals: list[list[int]]) -> list[list[int]]:
     if not intervals:
         return []
-    intervals.sort(key=lambda x: x[0])
-    fusionnes = [intervals[0]]
+    intervals.sort(key=lambda x: x[0])  # Tri par début d'intervalle
+    merged: list[list[int]] = [intervals[0]]
 
-    for debut, fin in intervals[1:]:
-        dernier_fin = fusionnes[-1][1]
-        if debut <= dernier_fin:
-            fusionnes[-1][1] = max(dernier_fin, fin)
-        else:
-            fusionnes.append([debut, fin])
+    for start, end in intervals[1:]:
+        last_end = merged[-1][1]
+        if start <= last_end:  # Chevauchement
+            merged[-1][1] = max(last_end, end)
+        else:  # Disjoint
+            merged.append([start, end])
 
-    return fusionnes
+    return merged
 ```
 
 ---
 
-## 9. Heap (Tas Binaire)
+## 9. Heap
 
 ### Top K éléments (Min-Heap de taille K)
 ```python
 import heapq
 
-def squelette_heap_top_k(nums, k):
-    min_heap = []
+
+def heap_top_k_skeleton(nums: list[int], k: int) -> int:
+    min_heap: list[int] = []
     for num in nums:
         heapq.heappush(min_heap, num)
         if len(min_heap) > k:
-            heapq.heappop(min_heap)
-    return min_heap[0]
+            heapq.heappop(min_heap)  # Éjecte le plus petit pour garder les K plus grands
+    return min_heap[0]  # Le K-ième plus grand élément
+```
+
+### Simulation dynamique (Max-Heap via négation)
+```python
+import heapq
+
+
+def max_heap_skeleton(nums: list[int]) -> int:
+    max_heap = [-x for x in nums]
+    heapq.heapify(max_heap)
+
+    while len(max_heap) > 1:
+        first = -heapq.heappop(max_heap)
+        second = -heapq.heappop(max_heap)
+        if first != second:  # Condition de réinsertion
+            heapq.heappush(max_heap, -(first - second))
+
+    return -max_heap[0] if max_heap else 0
 ```
 
 ---
 
 ## 10. Linked Lists
 
-### Inversion sur place (In-place Reversal) & Fast/Slow Pointers
+### Inversion sur place (In-place Reversal)
 ```python
-def squelette_reverse_list(head):
-    prev = None
+from typing import Optional
+
+
+class ListNode:
+    def __init__(self, val: int = 0, next: Optional["ListNode"] = None):
+        self.val = val
+        self.next = next
+
+
+def reverse_linked_list_skeleton(head: Optional[ListNode]) -> Optional[ListNode]:
+    prev: Optional[ListNode] = None
     curr = head
     while curr:
         nxt = curr.next      # 1. Sauvegarder la suite
         curr.next = prev     # 2. Inverser le pointeur
         prev = curr          # 3. Avancer prev
         curr = nxt           # 4. Avancer curr
-    return prev
+    return prev              # Nouvelle tête de liste
+```
 
-def squelette_fast_slow(head):
+### Fast & Slow Pointers
+```python
+from typing import Optional
+
+
+def fast_slow_skeleton(head: Optional[ListNode]) -> Optional[ListNode]:
     slow = fast = head
     while fast and fast.next:
         slow = slow.next
         fast = fast.next.next
-        if ...:  # Condition de rencontre (cycle)
-            return True
-    return slow  # Milieu de la liste
+        if slow == fast:  # Condition de rencontre (cycle)
+            return slow
+    return slow  # Milieu de la liste si pas de cycle
 ```
 
 ---
 
 ## 11. Trees
 
-### DFS Récursif (Profondeur)
+### Parcours DFS Récursif
 ```python
-def squelette_dfs(root):
-    if not root:
-        return ...  # Cas de base (0, True, None, [])
+from typing import Optional
 
-    gauche = squelette_dfs(root.left)
-    droite = squelette_dfs(root.right)
 
-    return ...  # Combiner gauche, droite et root.val
+class TreeNode:
+    def __init__(
+        self,
+        val: int = 0,
+        left: Optional["TreeNode"] = None,
+        right: Optional["TreeNode"] = None,
+    ):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def dfs_tree_skeleton(root: Optional[TreeNode]) -> int:
+    if not root:  # Cas de base obligatoire
+        return 0
+
+    left_res = dfs_tree_skeleton(root.left)
+    right_res = dfs_tree_skeleton(root.right)
+
+    # Combinaison des résultats (Post-order)
+    return 1 + max(left_res, right_res)
 ```
 
-### BFS Itératif par Niveau (Largeur)
+### Parcours BFS par Niveau (Queue)
 ```python
 from collections import deque
+from typing import Optional
 
-def squelette_bfs(root):
+
+def bfs_tree_skeleton(root: Optional[TreeNode]) -> list[list[int]]:
     if not root:
         return []
-    queue = deque([root])
-    result = []
+
+    result: list[list[int]] = []
+    queue: deque[TreeNode] = deque([root])
 
     while queue:
-        level = len(queue)
-        current_level = []
-        for _ in range(level):
+        level_size = len(queue)  # Figer la taille du niveau actuel
+        curr_level: list[int] = []
+
+        for _ in range(level_size):
             node = queue.popleft()
-            current_level.append(node.val)
+            curr_level.append(node.val)
             if node.left:
                 queue.append(node.left)
             if node.right:
                 queue.append(node.right)
-        result.append(current_level)
+
+        result.append(curr_level)
 
     return result
 ```
