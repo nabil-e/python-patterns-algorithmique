@@ -219,6 +219,72 @@ Utilise ce fichier central pour cocher ta progression globale, noter tes réflex
 - [ ] **235. Lowest Common Ancestor of a Binary Search Tree** (Medium) — [LeetCode](https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-search-tree/)
   > Notes : 
 
+### 12. Backtracking (10 exercices)
+- [ ] **78. Subsets** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **46. Permutations** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **39. Combination Sum** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **77. Combinations** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **22. Generate Parentheses** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **90. Subsets II** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **40. Combination Sum II** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **17. Letter Combinations of a Phone Number** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **79. Word Search** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **131. Palindrome Partitioning** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+
+### 13. Graphs (10 exercices)
+- [ ] **200. Number of Islands** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **695. Max Area of Island** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **733. Flood Fill** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **1971. Find if Path Exists in Graph** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **997. Find the Town Judge** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **994. Rotting Oranges** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **133. Clone Graph** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **207. Course Schedule** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **210. Course Schedule II** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **130. Surrounded Regions** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+
+### 14. Dynamic Programming (10 exercices)
+- [ ] **70. Climbing Stairs** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **746. Min Cost Climbing Stairs** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **121. Best Time to Buy and Sell Stock** (Easy) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **198. House Robber** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **213. House Robber II** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **322. Coin Change** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **300. Longest Increasing Subsequence** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **139. Word Break** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **62. Unique Paths** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+- [ ] **1143. Longest Common Subsequence** (Medium) — [LeetCode](https://leetcode.com)
+  > Notes : 
+
 ## Hors-Pattern (String / Math)
 - [ ] **14. Longest Common Prefix** (Easy) — [LeetCode](https://leetcode.com/problems/longest-common-prefix/)
   > Notes : 

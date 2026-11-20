@@ -1156,3 +1156,48 @@ Clique sur **Voir la réponse** pour révéler la solution. Ce paquet est synchr
 
 ---
 
+## 12. Backtracking
+
+<details><summary><b>Q113 :</b> Quelles sont les 3 étapes fondamentales d'une fonction de Backtracking ?</summary><br><b>R :</b> <b>1. Choisir</b> (<code>path.append</code>) → <b>2. Explorer</b> (appel récursif) → <b>3. Annuler</b> (<code>path.pop</code>).</details>
+
+<details><summary><b>Q114 :</b> Pourquoi écrit-on <code>res.append(path.copy())</code> au lieu de <code>res.append(path)</code> en Backtracking ?</summary><br><b>R :</b> Car <code>path</code> est une liste mutable modifiée sur place : sans copie, <code>res</code> contiendra uniquement des références vers une liste vide à la fin.</details>
+
+<details><summary><b>Q115 :</b> Comment éviter les combinaisons en double dans <code>Subsets II</code> ou <code>Combination Sum II</code> ?</summary><br><b>R :</b> Trier le tableau au préalable (<code>nums.sort()</code>) et sauter les doublons au même niveau avec <code>if i > start and nums[i] == nums[i-1]: continue</code>.</details>
+
+<details><summary><b>Q116 :</b> Quelle est la complexité temporelle typique pour générer tous les sous-ensembles ou toutes les permutations ?</summary><br><b>R :</b> Sous-ensembles : <b>O(n × 2^n)</b>. Permutations : <b>O(n × n!)</b>.</details>
+
+<details><summary><b>Q117 :</b> Comment marquer temporairement une case visitée dans <code>Word Search</code> sans allouer un <code>set</code> supplémentaire ?</summary><br><b>R :</b> Sauvegarder <code>temp = board[r][c]</code>, remplacer par <code>'#'</code> avant l'appel récursif, puis restaurer <code>board[r][c] = temp</code>.</details>
+
+<details><summary><b>Q118 :</b> Quelle est la différence clé entre Backtracking et Programmation Dynamique ?</summary><br><b>R :</b> Le Backtracking explore <b>toutes les solutions</b> valides (arbre complet), tandis que la DP cherche une <b>valeur optimale ou un dénombrement</b> en évitant de recalculer les sous-problèmes identiques.</details>
+
+---
+
+## 13. Graphs
+
+<details><summary><b>Q119 :</b> Dans quel cas préférer le Tri Topologique (algorithme de Kahn) au DFS sur un graphe orienté ?</summary><br><b>R :</b> Pour ordonner des tâches avec dépendances (prérequis) et détecter un cycle : on traite les nœuds dont le degré entrant (<code>in_degree</code>) vaut <code>0</code>.</details>
+
+<details><summary><b>Q120 :</b> Comment éviter d'explorer plusieurs fois le même nœud dans un graphe contenant des cycles ?</summary><br><b>R :</b> Maintenir un ensemble <code>visited = set()</code> et marquer le nœud comme visité <b>dès son ajout</b> dans la file (BFS) ou à l'entrée de la fonction (DFS).</details>
+
+<details><summary><b>Q121 :</b> Quelle structure de données Python est obligatoire pour un BFS efficace sur un graphe ?</summary><br><b>R :</b> <code>collections.deque</code> avec <code>popleft()</code> en <b>O(1)</b> (<code>list.pop(0)</code> est en O(n) et provoque un TLE).</details>
+
+<details><summary><b>Q122 :</b> Comment parcourir les 4 voisins orthogonaux d'une cellule <code>(r, c)</code> dans une grille 2D en Python propre ?</summary><br><b>R :</b> <code>for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)): nr, nc = r + dr, c + dc</code> en vérifiant <code>0 <= nr < rows and 0 <= nc < cols</code>.</details>
+
+<details><summary><b>Q123 :</b> Quand utiliser un BFS multi-sources plutôt que de lancer un BFS depuis chaque case ?</summary><br><b>R :</b> Quand on cherche la distance minimale depuis <b>n'importe quel point de départ</b> parmi plusieurs (ex: <code>Rotting Oranges</code>) : on met toutes les sources dans la <code>deque</code> dès le départ.</details>
+
+<details><summary><b>Q124 :</b> Quelle est la complexité temporelle et spatiale d'un parcours DFS ou BFS sur un graphe de V sommets et E arêtes ?</summary><br><b>R :</b> Temps : <b>O(V + E)</b>. Espace : <b>O(V)</b> pour le set <code>visited</code> et la pile/file.</details>
+
+---
+
+## 14. Dynamic Programming
+
+<details><summary><b>Q125 :</b> Quelle est la différence entre l'approche Top-Down et Bottom-Up en Programmation Dynamique ?</summary><br><b>R :</b> <b>Top-Down</b> : récursion + mémoïsation (<code>@cache</code>). <b>Bottom-Up</b> : boucle itérative remplissant un tableau <code>dp</code> du cas de base vers la cible.</details>
+
+<details><summary><b>Q126 :</b> Quel décorateur de la bibliothèque standard Python permet d'activer la mémoïsation en une ligne ?</summary><br><b>R :</b> <code>from functools import cache</code> (ou <code>@lru_cache(None)</code>) placé juste au-dessus de la fonction récursive.</details>
+
+<details><summary><b>Q127 :</b> Pourquoi ne faut-il jamais utiliser <code>@cache</code> sur une fonction récursive qui prend une <code>list</code> en paramètre ?</summary><br><b>R :</b> Car une <code>list</code> est un type mutable non hachable (<code>TypeError: unhashable type: 'list'</code>). Il faut passer des index entiers ou des tuples.</details>
+
+<details><summary><b>Q128 :</b> Comment optimiser l'espace mémoire d'une DP 1D (ex: <code>Climbing Stairs</code> ou <code>House Robber</code>) de O(n) à O(1) ?</summary><br><b>R :</b> Si <code>dp[i]</code> ne dépend que de <code>dp[i-1]</code> et <code>dp[i-2]</code>, remplacer le tableau entier par deux variables glissantes <code>prev1, prev2</code>.</details>
+
+<details><summary><b>Q129 :</b> Dans <code>Coin Change</code> (minimiser le nombre de pièces), par quelle valeur initiale remplir le tableau <code>dp</code> ?</summary><br><b>R :</b> Par <code>float('inf')</code> (ou <code>amount + 1</code>), avec le cas de base <code>dp[0] = 0</code>.</details>
+
+<details><summary><b>Q130 :</b> Quelles sont les 2 conditions pour qu'un problème soit résoluble par Programmation Dynamique ?</summary><br><b>R :</b> <b>1. Sous-structure optimale</b> (solution construite à partir de sous-problèmes) et <b>2. Chevauchement des sous-problèmes</b> (mêmes états recalculés plusieurs fois).</details>
